@@ -82,4 +82,15 @@ class Input {
         return(isset($_POST[$key]) ? $_POST[$key] : $default);
     }
 
+    /**
+     * Trim: Returns the value of a trim processing.
+     * @access public
+     * @param string $text
+     * @return string
+     * @since 1.0.1
+     */
+    public static function trim($text = "") {
+        return stripslashes(trim($text));
+    }
+
 }

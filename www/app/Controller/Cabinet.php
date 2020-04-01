@@ -54,8 +54,6 @@ class Cabinet extends Core\Controller {
         $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
         $user = $userID === null ? false : Model\User::getInstance($userID);
 
-        var_dump(Utility\Session::get('post'));
-
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/add", [
             "user" =>  !empty($user) ? $user->data() : [],

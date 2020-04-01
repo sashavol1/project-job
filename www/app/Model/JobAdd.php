@@ -48,11 +48,6 @@ class JobAdd {
             return false;
         }
         try {
-
-            var_dump(Utility\Input::post("name"));
-            var_dump(Utility\Input::post("text"));
-            die();
-
             // Generate a salt, which will be applied to the during the password
             // hashing process.
             $salt = Utility\Hash::generateSalt(32);
@@ -61,8 +56,9 @@ class JobAdd {
             // ID which will be returned on success.
             $Job = new Job;
             $jobID = $Job->createJob([
-                "name" => Utility\Input::post("name"),
-                "text" => Utility\Input::post("text"),
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "text" => Utility\Input::trim(Utility\Input::post("text")),
+                "status" => 'active',
             ]);
 
             // Write all necessary data into the session as the user has been
