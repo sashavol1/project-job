@@ -20,10 +20,20 @@ class JobAdd {
             "min_characters" => 6,
             "max_characters" => 120
         ],
-        "text" => [
+        "work_annonce" => [
             "required" => true,
             "min_characters" => 6,
-            "max_characters" => 1000
+            "max_characters" => 330
+        ],
+        "work_requirements" => [
+            "required" => true,
+            "min_characters" => 6,
+            "max_characters" => 330
+        ],
+        "work_conditions" => [
+            "required" => true,
+            "min_characters" => 6,
+            "max_characters" => 330
         ],
         // "email" => [
         //     "filter" => "email",
@@ -57,13 +67,16 @@ class JobAdd {
             $Job = new Job;
             $jobID = $Job->createJob([
                 "name" => Utility\Input::trim(Utility\Input::post("name")),
-                "text" => Utility\Input::trim(Utility\Input::post("text")),
+                "text" => Utility\Input::trim(Utility\Input::post("work_annonce")) . '%br%' . Utility\Input::trim(Utility\Input::post("work_requirements")) . '%br%' . Utility\Input::trim(Utility\Input::post("work_conditions")),
                 "status" => 'active',
+                "announcement" => Utility\Input::trim(Utility\Input::post("work_annonce"))
             ]);
+
+            // где-то тут создание категорий
 
             // Write all necessary data into the session as the user has been
             // successfully registered and return the user's unique ID.
-            Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
+            Utility\Flash::success(Utility\Text::get("NEW_JOB_CREATED"));
             return $jobID;
         } catch (Exception $ex) {
             Utility\Flash::danger($ex->getMessage());

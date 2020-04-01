@@ -37,9 +37,11 @@ return [
         "LOGIN_USER_NOT_FOUND" => "Не найден введенный емейл адрес!",
         "" => "",
         // 
-        // Register Model Texts
+        // MAIN Model Texts
         // =====================================================================
         "REGISTER_USER_CREATED" => "Аккаунт успешно создан!",
+        "NEW_JOB_CREATED" => "Вакансия успешно добавлена!",
+        "JOB_EDITED" => "Вакансия успешно отредактирована!",
         "" => "",
         // 
         // Register Model Texts
