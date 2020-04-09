@@ -15,10 +15,7 @@ class UserRegister {
 
     /** @var array The register form inputs. */
     private static $_inputs = [
-        "forename" => [
-            "required" => true
-        ],
-        "surname" => [
+        "name" => [
             "required" => true
         ],
         "email" => [
@@ -34,12 +31,6 @@ class UserRegister {
             "matches" => "password",
             "required" => true
         ],
-    ];
-
-    private static $_inputs_del = [
-        "id" => [
-            "required" => true
-        ]
     ];
 
     /**
@@ -68,50 +59,18 @@ class UserRegister {
             $User = new User;
             $userID = $User->createUser([
                 "email" => Utility\Input::post("email"),
-                "forename" => Utility\Input::post("forename"),
+                "name" => Utility\Input::post("name"),
                 "password" => Utility\Hash::generate(Utility\Input::post("password"), $salt),
                 "salt" => $salt,
-                "surname" => Utility\Input::post("surname"),
+                "is_employer" => (bool) Utility\Input::post("is_employer"),
+                "is_employee" => (bool) Utility\Input::post("is_employee"),
                 "type" => 'user'
             ]);
 
             // Write all necessary data into the session as the user has been
             // successfully registered and return the user's unique ID.
             Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
-            return $userID;
-        } catch (Exception $ex) {
-            Utility\Flash::danger($ex->getMessage());
-        }
-        return false;
-    }
 
-    /**
-     * Delete: Validates the register form inputs, creates a new user in the
-     * database and writes all necessary data into the session if the
-     * registration was successful. Returns the new user's ID if everything is
-     * okay, otherwise turns false.
-     * @access public
-     * @return boolean
-     * @since 1.0.2
-     */
-    public static function delete() {
-
-        // Validate the register form inputs.
-        if (!Utility\Input::check($_POST, self::$_inputs_del)) {
-            return false;
-        }
-        try {
-
-            // Insert the new user record into the database, storing the unique
-            // ID which will be returned on success.
-            $User = new User;
-            $userID = $User->deleteUser([
-                'id' => Utility\Input::post("id")
-            ]);
-
-            // Write all necessary data into the session as the user has been
-            // successfully registered and return the user's unique ID.
-            Utility\Flash::success(Utility\Text::get("USER_DELETED"));
             return $userID;
         } catch (Exception $ex) {
             Utility\Flash::danger($ex->getMessage());

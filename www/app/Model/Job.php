@@ -25,23 +25,23 @@ class Job extends Core\Model {
      */
     public function createJob(array $fields) {
         if (!$jobID = $this->create("jobs", $fields)) {
-            throw new Exception(Utility\Text::get("USER_CREATE_EXCEPTION"));
+            throw new Exception(Utility\Text::get("NEW_JOB_EXCEPTION"));
         }
         return $jobID;
     }
 
     /**
-     * Get Instance: Returns an instance of the User model if the specified user
+     * Get Instance: Returns an instance of the User model if the specified job
      * exists in the database. 
      * @access public
-     * @param string $user
+     * @param string $job
      * @return User|null
      * @since 1.0.2
      */
-    public static function getInstance($user) {
-        $User = new User();
-        if ($User->findUser($user)->exists()) {
-            return $User;
+    public static function getInstance($job) {
+        $Job = new Job();
+        if ($Job->findJobs($job)->exists()) {
+            return $Job;
         }
         return null;
     }
@@ -55,15 +55,27 @@ class Job extends Core\Model {
      * @return boolean
      * @since 1.0.3
      */
-    public function findUser($user) {
-        $field = filter_var($user, FILTER_VALIDATE_EMAIL) ? "email" : (is_numeric($user) ? "id" : "username");
-        return($this->find("users", [$field, "=", $user]));
+    public function findJobs($job) {
+        return($this->find("jobs", ['id', "=", $job]));
+    }
+
+    /**
+     * Find User: Retrieves and stores a specified user record from the database
+     * into a class property. Returns true if the record was found, or false if
+     * not.
+     * @access public
+     * @param string $user
+     * @return boolean
+     * @since 1.0.3
+     */
+    public function findOneJob($job_id, $client_id) {
+        return($this->find("jobs", [['id', "=", $job_id], ['client_id', "=", $client_id]]));
     }
     
     
 
     /**
-     * Update User: Updates a specified user record in the database.
+     * Update Job: Updates a specified user record in the database.
      * @access public
      * @param array $fields
      * @param integer $userID [optional]
@@ -71,8 +83,8 @@ class Job extends Core\Model {
      * @since 1.0.3
      * @throws Exception
      */
-    public function updateUser(array $fields, $userID = null) {
-        if (!$this->update("users", $fields, $userID)) {
+    public function updateJob(array $fields, $userID = null) {
+        if (!$this->update("jobs", $fields, $userID)) {
             throw new Exception(Utility\Text::get("USER_UPDATE_EXCEPTION"));
         }
     }
@@ -87,7 +99,7 @@ class Job extends Core\Model {
      * @since 1.0.3
      * @throws Exception
      */
-    public function selectUser(array $where = []) {
+    public function selectJob(array $where = []) {
         return($this->findAll("users"));
     }
     

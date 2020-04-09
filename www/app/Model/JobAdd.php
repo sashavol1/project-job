@@ -84,4 +84,46 @@ class JobAdd {
         return false;
     }
 
+    /**
+     * Edit: Validates the register form inputs, creates a new user in the
+     * database and writes all necessary data into the session if the
+     * registration was successful. Returns the new user's ID if everything is
+     * okay, otherwise turns false.
+     * @access public
+     * @return boolean
+     * @since 1.0.2
+     */
+    public static function edit() {
+
+        // Validate the register form inputs.
+        if (!Utility\Input::check($_POST, self::$_inputs)) {
+            return false;
+        }
+        try {
+            // Generate a salt, which will be applied to the during the password
+            // hashing process.
+            $salt = Utility\Hash::generateSalt(32);
+
+            // Insert the new user record into the database, storing the unique
+            // ID which will be returned on success.
+            $Job = new Job;
+            $jobID = $Job->updateJob([
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "text" => Utility\Input::trim(Utility\Input::post("work_annonce")) . '%br%' . Utility\Input::trim(Utility\Input::post("work_requirements")) . '%br%' . Utility\Input::trim(Utility\Input::post("work_conditions")),
+                "status" => 'active',
+                "announcement" => Utility\Input::trim(Utility\Input::post("work_annonce"))
+            ]);
+
+            // где-то тут создание категорий
+
+            // Write all necessary data into the session as the user has been
+            // successfully registered and return the user's unique ID.
+            Utility\Flash::success(Utility\Text::get("JOB_EDITED"));
+            return $jobID;
+        } catch (Exception $ex) {
+            Utility\Flash::danger($ex->getMessage());
+        }
+        return false;
+    }
+
 }

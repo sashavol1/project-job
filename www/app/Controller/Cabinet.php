@@ -74,7 +74,7 @@ class Cabinet extends Core\Controller {
     public function _add() {
 
         // Check that the user is authenticated.
-        Utility\Auth::checkAuthenticated();        
+        Utility\Auth::checkAuthenticated();
         
         // Process the register request, redirecting to the login controller if
         // successful or back to the register controller if not.
@@ -83,6 +83,60 @@ class Cabinet extends Core\Controller {
             Utility\Redirect::to(APP_URL . "cabinet/add");
         }
         Utility\Redirect::to(APP_URL . "cabinet/add");
+    }
+
+    /**
+     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
+     * by unauthenticated users!
+     * @access public
+     * @example Cabinet/add
+     * @return void
+     * @since 1.0.2
+     */
+    public function edit() {
+
+        // Check that the user is unauthenticated.
+        Utility\Auth::checkAuthenticated();
+
+        $id = intval(Utility\Input::trim(Utility\Input::get("id")));
+        if (!$id) Utility\Redirect::to(APP_URL . "cabinet");
+        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
+        $user = $userID === null ? false : Model\User::getInstance($userID)->data();
+
+        // Get Job
+        $Job = new model\Job;
+        $current_job = $Job->findOneJob($id, $user->id)->data();
+
+        // Set any dependencies, data and render the view.
+        $this->View->render("cabinet/edit", [
+            "job" => $current_job,
+            "user" => $user,
+            "title" => "Добавить объявление",
+            "page" => 'index',
+            "post" => Utility\Session::get('post')
+        ]);
+    }
+
+    /**
+     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
+     * by unauthenticated users!
+     * @access public
+     * @example Cabinet/add
+     * @return void
+     * @since 1.0.2
+     */
+    public function _edit() {
+
+        // Check that the user is authenticated.
+        Utility\Auth::checkAuthenticated();
+        
+        // Process the register request, redirecting to the login controller if
+        // successful or back to the register controller if not.
+        Utility\Session::put('post', $_POST);
+        if (Model\JobAdd::edit()) {
+            Utility\Redirect::to(APP_URL . "cabinet");
+        }
+        Utility\Redirect::to(APP_URL . "cabinet");
     }
 
 }

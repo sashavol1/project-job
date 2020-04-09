@@ -58,16 +58,21 @@ class Database {
      * @since 1.0.1
      */
     public function action($action, $table, array $where = []) {
-        if (count($where) === 3) {
-            $operator = $where[1];
-            $operators = ["=", ">", "<", ">=", "<="];
-            if (in_array($operator, $operators)) {
-                $field = $where[0];
-                $value = $where[2];
-                $params = [":value" => $value];
-                if (!$this->query("{$action} FROM `{$table}` WHERE `{$field}` {$operator} :value", $params)->error()) {
-                    return $this;
-                }
+        if (!empty($where)) { 
+            $sql = '';
+            $params = [];
+            $counter = 0;
+            foreach ($where as $w) {
+                $field = $w[0];
+                $operator = $w[1];
+                $value = $w[2];
+                $params[] = [":value".$counter => $value];
+                $sql .= " AND `{$field}` {$operator} :value".$counter;
+                $counter++;
+            }
+
+            if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql, $params)->error()) {
+                return $this;
             }
         } else {
             if (!$this->query("{$action} FROM `{$table}`")->error()) {
@@ -177,16 +182,19 @@ class Database {
         $this->_count = 0;
         $this->_error = false;
         $this->_results = [];
+
         if (($this->_query = $this->_PDO->prepare($sql))) {
-            foreach ($params as $key => $value) {
-                $this->_query->bindValue($key, $value);
+            foreach ($params as $p) {
+                foreach ($p as $key => $value) {
+                    $this->_query->bindValue($key, $value);
+                }
             }
             if ($this->_query->execute()) {
                 $this->_results = $this->_query->fetchAll(PDO::FETCH_OBJ);
                 $this->_count = $this->_query->rowCount();
             } else {
                 $this->_error = true;
-                //die(print_r($this->_query->errorInfo()));
+                die(print_r($this->_query->errorInfo()));
             }
         }
         return $this;

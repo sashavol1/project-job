@@ -42,6 +42,7 @@ return [
         "REGISTER_USER_CREATED" => "Аккаунт успешно создан!",
         "NEW_JOB_CREATED" => "Вакансия успешно добавлена!",
         "JOB_EDITED" => "Вакансия успешно отредактирована!",
+        "NEW_JOB_EXCEPTION" => "Проблемы с добавлением работы!",
         "" => "",
         // 
         // Register Model Texts

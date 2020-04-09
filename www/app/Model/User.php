@@ -57,7 +57,7 @@ class User extends Core\Model {
      */
     public function findUser($user) {
         $field = filter_var($user, FILTER_VALIDATE_EMAIL) ? "email" : (is_numeric($user) ? "id" : "username");
-        return($this->find("users", [$field, "=", $user]));
+        return($this->find("users", [[$field, "=", $user]]));
     }
     
     
