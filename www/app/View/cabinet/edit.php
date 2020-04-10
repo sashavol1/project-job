@@ -2,7 +2,7 @@
 
 use App\Utility;
 
-$text = explode('%br%', $this->job->text)
+$text = explode('%br%', $this->job->text);
 
 ?>
 

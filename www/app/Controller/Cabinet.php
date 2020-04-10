@@ -106,6 +106,7 @@ class Cabinet extends Core\Controller {
         // Get Job
         $Job = new model\Job;
         $current_job = $Job->findOneJob($id, $user->id)->data();
+        if (empty($current_job)) Utility\Redirect::to(APP_URL . "cabinet/add");
 
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/edit", [
