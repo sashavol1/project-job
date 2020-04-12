@@ -182,7 +182,6 @@ class Database {
         $this->_count = 0;
         $this->_error = false;
         $this->_results = [];
-
         if (($this->_query = $this->_PDO->prepare($sql))) {
             foreach ($params as $p) {
                 foreach ($p as $key => $value) {

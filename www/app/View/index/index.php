@@ -1,3 +1,10 @@
+
+<?
+
+    // var_dump($this->jobs[0]->name);
+    // die();
+
+?>
 <div class="container">
     <h1>Работа в Великом Новгороде</h1>
     <div class="row">
@@ -59,11 +66,19 @@
                 <li class="nav-item"><a class="nav-link" href="./jobcat.php?id=85">Экономика, финансы, банк</a></li>
                 <li class="nav-item"><a class="nav-link" href="./jobcat.php?id=108">Электрика, электротехника</a></li>
                 <li class="nav-item"><a class="nav-link" href="./jobcat.php?id=76">Юриспруденция, нотариат</a></li>
-                <li class="nav-item"><a class="nav-link" href="./jobcat.php?id=86">_Прочее_</li>
+                <li class="nav-item"><a class="nav-link" href="./jobcat.php?id=86">_Прочее_</a></li>
             </ul>
         </div>
         <div class="col-sm-8">
-            // Тут будет список вакансий работы
+            <ul>
+            <? foreach ($this->jobs as $j): ?>
+                <li>
+                    <h2><?= $j->name; ?></h2>
+                    <date><?= $j->dt_add; ?></date>
+                    <p><?= $j->announcement; ?></p>
+                </li>
+            <? endforeach; ?>
+            </ul>
         </div>
     </div>
 </div>

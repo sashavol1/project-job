@@ -55,8 +55,8 @@ class Job extends Core\Model {
      * @return boolean
      * @since 1.0.3
      */
-    public function findJobs($job) {
-        return($this->find("jobs", ['id', "=", $job]));
+    public function findJobs(array $param = []) {
+        return($this->findAll("jobs", $param));
     }
 
     /**

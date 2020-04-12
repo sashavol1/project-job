@@ -39,7 +39,10 @@ class Controller {
         }
 
         // Create a new instance of the core view class.
+        $this->beforeAction();
         $this->View = new View;
     }
+
+    public function beforeAction() {}
 
 }

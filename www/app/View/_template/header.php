@@ -26,6 +26,12 @@ use App\Utility\Flash;
                   <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ml-auto">
                       <?php if (!empty($this->user)): ?>
+                        <?php if ($this->user->type == 'admin'): ?>                          
+                          <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'active' : ''; ?>">
+                            <a class="nav-link" href="<?= $this->makeURL("manager"); ?>">Менеджер</a>
+                          </li>
+                          </li>
+                        <?php else: ?>
                           <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'active' : ''; ?>">
                             <a class="nav-link" href="<?= $this->makeURL("all"); ?>">Список</a>
                           </li>
@@ -35,9 +41,7 @@ use App\Utility\Flash;
                           <li class="nav-item <?php echo isset($this->page) && $this->page == 'cabinet' ? 'active' : ''; ?>">
                             <a class="nav-link" href="<?= $this->makeURL("cabinet/add"); ?>">Добавить</a>
                           </li>
-                          <?php if ($this->user->type == 'admin'): ?>
-                            Для админа
-                          <?php endif; ?>
+                        <?php endif; ?>
                           <li class="nav-item">
                             <a class="nav-link" href="<?= $this->makeURL("login/logout"); ?>">Выйти</a>
                           </li>
