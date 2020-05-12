@@ -24,7 +24,7 @@ class Job extends Core\Model {
      * @throws Exception
      */
     public function createJob(array $fields) {
-        if (!$jobID = $this->create("jobs", $fields)) {
+        if (!$jobID = $this->create("jobs", [$fields])) {
             throw new Exception(Utility\Text::get("NEW_JOB_EXCEPTION"));
         }
         return $jobID;

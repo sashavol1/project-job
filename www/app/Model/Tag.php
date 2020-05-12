@@ -24,7 +24,7 @@ class Tag extends Core\Model {
      * @throws Exception
      */
     public function createTag(array $fields) {
-        if (!$tagId = $this->create("tags", $fields)) {
+        if (!$tagId = $this->create("tags", [$fields])) {
             throw new Exception('Ошибка в создании ТЭГА');
         }
         return $tagId;

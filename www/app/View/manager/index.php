@@ -2,7 +2,7 @@
 
 <?
 
-var_dump($this->tags);
+// var_dump($this->tags);
 
 ?>
 <div class="container">

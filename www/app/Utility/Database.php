@@ -158,12 +158,14 @@ class Database {
     public function insert($table, array $fields) {
         if (count($fields)) {
             $params = [];
-            foreach ($fields as $key => $value) {
-                $params[":{$key}"] = $value;
+            foreach ($fields as $f) {
+                foreach ($f as $key => $value) {
+                    $params[":{$key}"] = $value;
+                }
             }
-            $columns = implode("`, `", array_keys($fields));
+            $columns = implode("`, `", array_keys($fields[0]));
             $values = implode(", ", array_keys($params));
-            if (!$this->query("INSERT INTO `{$table}` (`{$columns}`) VALUES({$values})", $params)->error()) {
+            if (!$this->query("INSERT INTO `{$table}` (`{$columns}`) VALUES({$values})", [$params])->error()) {
                 return($this->_PDO->lastInsertId());
             }
         }
