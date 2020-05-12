@@ -10,7 +10,7 @@
     <hr>
     <div class="form-group">
         <a class="btn btn-primary" href="/manager/tag">Тэги</a>
-        <a class="btn btn-primary" href="/manager/categorу">Категории</a>
+        <a class="btn btn-primary" href="/manager/category">Категории</a>
         <a class="btn btn-primary" href="/manager/job">Работа</a>
     </div>
     <form action="">

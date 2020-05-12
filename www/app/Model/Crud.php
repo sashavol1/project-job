@@ -9,8 +9,8 @@ use App\Utility;
 /**
  * CRUD Model:
  *
- * @author Andrew Dyer <andrewdyer@outlook.com>
- * @since 1.0.2
+ * @author Aleksandr
+ * @since 1.1.0
  */
 class CRUD extends Core\Model {
 
@@ -20,10 +20,10 @@ class CRUD extends Core\Model {
      * @param string $table
      * @param array $fields
      * @return string|boolean
-     * @since 1.0.3
+     * @since 1.1.0
      * @throws Exception
      */
-    public function create(string $table = null, array $fields) {
+    public function _create(string $table = null, array $fields) {
         if (!$id = $this->create($table, [$fields])) {
             throw new Exception('Ошибка в создании');
         }
@@ -36,50 +36,51 @@ class CRUD extends Core\Model {
      * @param string $table
      * @param array $rules
      * @return boolean
-     * @since 1.0.3
+     * @since 1.1.0
      */
-    public function find(string $table = null, array $rules = []) {
+    public function _find(string $table = null, array $rules = []) {
         return($this->findAll($table, $rules));
     }
 
     /**
-     * Find Tag: Retrieves and stores a specified user record from the database
-     * into a class property. Returns true if the record was found, or false if
-     * not.
+     * Find One Row
      * @access public
-     * @param int $tag_id
+     * @param string $table
+     * @param int $id
      * @return boolean
-     * @since 1.0.3
+     * @since 1.1.0
      */
-    public function findOneTag($tag_id) {
-        return($this->find("tags", [['id', "=", $tag_id]]));
+    public function _findById(string $table = null, $id) {
+        return($this->find($table, [['id', "=", $id]])->data());
     }  
     
     /**
-     * Update Tag: Updates a specified tag record in the database.
+     * Update.
      * @access public
+     * @param string $table
      * @param array $fields
      * @param integer $tagId [optional]
      * @return void
-     * @since 1.0.3
+     * @since 1.1.0
      * @throws Exception
      */
-    public function updateTag(array $fields, $tagId = null) {
-        if (!$this->update("tags", $fields, $tagId)) {
-            throw new Exception('Ошибка при обновлении тега');
+    public function _update(string $table = null, array $fields, $id = null) {
+        if (!$this->update($table, $fields, $id)) {
+            throw new Exception('Ошибка при обновлении');
         }
     }
-
+    
     /**
-     * Select All Tag: Select a specified tag record in the database.
+     * Delete.
      * @access public
-     * @param array $where
+     * @param string $table
+     * @param int $id
      * @return array
-     * @since 1.0.3
+     * @since 1.1.0
      * @throws Exception
      */
-    public function selectTag(array $where = []) {
-        return($this->findAll("tags"));
+    public function _delete(string $table = null, int $id = null) {
+        return( $this->delete($table, ['id', "=", $id]) );
     }
 
 }

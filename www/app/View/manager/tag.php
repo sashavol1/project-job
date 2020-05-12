@@ -9,9 +9,9 @@
     <h1>Тэги</h1>
     <hr>
     <div class="form-group">
-        <a class="btn btn-primary" href="/manager/tags">Тэги</a>
-        <a class="btn btn-primary" href="/manager/categories">Категории</a>
-        <a class="btn btn-primary" href="/manager/jobs">Работа</a>
+        <a class="btn btn-primary" href="/manager/tag">Тэги</a>
+        <a class="btn btn-primary" href="/manager/category">Категории</a>
+        <a class="btn btn-primary" href="/manager/job">Работа</a>
     </div>
     <form action="<?= $this->makeUrl("manager/_tag_add"); ?>" method="post">
         <div class="form-group">
@@ -27,10 +27,14 @@
     </form>
     <hr>
     <table class="table table-bordered">
+        <? foreach($this->tags as $t): ?>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td><?= $t->name; ?></td>
+            <td><?= $t->description; ?></td>
+            <td>
+                <a href="/manager/tag_edit?id=<?= $t->id; ?>">Редактировать</a>
+            </td>
         </tr>
+        <? endforeach; ?>
     </table>
 </div>

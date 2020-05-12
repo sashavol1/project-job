@@ -14,6 +14,12 @@ class Controller {
 
     /** @var View An instance of the core view class. */
     protected $View = null;
+    
+    /** @var User. */
+    static protected $user = null;
+    
+    /** @var Errors. */
+    static protected $errors = [];
 
     /**
      * Construct: Creates and stores a new instance of the core view class,

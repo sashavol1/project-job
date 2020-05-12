@@ -247,7 +247,7 @@ class Database {
                 $x ++;
             }
             
-            if (!$this->query("UPDATE `{$table}` SET {$set} WHERE `id` = {$id}", $params)->error()) {
+            if (!$this->query("UPDATE `{$table}` SET {$set} WHERE `id` = {$id}", [$params])->error()) {
                 return true;
             }
         }
