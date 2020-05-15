@@ -199,6 +199,44 @@ class Validate {
     }
 
     /**
+     * Max Int Rule:
+     * @access protected
+     * @param string $input
+     * @param string $value
+     * @param string $ruleValue
+     * @return void
+     * @since 1.0.2
+     */
+    protected function maxIntRule($input, $value, $ruleValue) {
+        if (intval($value) > $ruleValue) {
+            $data = [
+                "%ITEM%" => $input,
+                "%RULE_VALUE%" => $ruleValue
+            ];
+            $this->_addError($input, Text::get("VALIDATE_MAX_INT_RULE", $data));
+        }
+    }
+
+    /**
+     * Min Int Rule:
+     * @access protected
+     * @param string $input
+     * @param string $value
+     * @param string $ruleValue
+     * @return void
+     * @since 1.0.2
+     */
+    protected function minIntRule($input, $value, $ruleValue) {
+        if (intval($value) < $ruleValue) {
+            $data = [
+                "%ITEM%" => $input,
+                "%RULE_VALUE%" => $ruleValue
+            ];
+            $this->_addError($input, Text::get("VALIDATE_MIN_INT_RULE", $data));
+        }
+    }
+
+    /**
      * Required Rule:
      * @access protected
      * @param string $input

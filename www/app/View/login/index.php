@@ -19,7 +19,7 @@
                             </label>
                         </div>
                         <input type="hidden" name="csrf_token" value="<?php echo App\Utility\Token::generate(); ?>" />
-                        <button type="submit" class="btn btn-primary">Войти</button>
+                        <button type="submit" class="uk-button uk-button-primary">Войти</button>
                         <!-- <a href="<?//= $this->makeURL("register"); ?>" class="btn btn-link">Register</a> -->
                     </form>
                 </div>

@@ -31,6 +31,6 @@ use App\Utility;
         </div>
 
         <input type="hidden" name="csrf_token" value="<?= App\Utility\Token::generate(); ?>" />
-        <button type="submit" class="btn btn-primary">Добавить</button>
+        <button type="submit" class="uk-button uk-button-primary">Добавить</button>
     </form>
 </div>

@@ -13,19 +13,9 @@
         <a class="btn btn-primary" href="/manager/category">Категории</a>
         <a class="btn btn-primary" href="/manager/job">Работа</a>
     </div>
-    <form action="<?= $this->makeUrl("manager/_tag_add"); ?>" method="post">
-        <div class="form-group">
-            <label>Название <span class="text-danger">*</span></label>
-            <input type="text" class="form-control" name="name"  />
-        </div>
-        <div class="form-group">
-            <label>Описание <span class="text-danger">*</span></label>
-            <textarea name="description" rows="3" class="form-control"></textarea>
-        </div>
-        <input type="hidden" name="csrf_token" value="<?= App\Utility\Token::generate(); ?>" />
-        <button type="submit" class="btn btn-primary">Добавить</button>
-    </form>
-    <hr>
+    <div class="form-group">
+    <a href="/manager/tag_add" class="btn btn-success">Добавить работу</a>
+    </div>
     <table class="table table-bordered">
         <? foreach($this->tags as $t): ?>
         <tr>

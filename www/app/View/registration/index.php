@@ -32,7 +32,7 @@
                             </label>
                         </div>
                         <input type="hidden" name="csrf_token" value="<?php echo App\Utility\Token::generate(); ?>" />
-                        <button type="submit" class="btn btn-primary">Регистрация</button>
+                        <button type="submit" class="uk-button uk-button-primary">Регистрация</button>
                         <!-- <a href="<?//= $this->makeURL("register"); ?>" class="btn btn-link">Register</a> -->
                     </form>
                 </div>
