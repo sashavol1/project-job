@@ -57,27 +57,22 @@ class Database {
      * @return Database|boolean
      * @since 1.0.1
      */
-    public function action($action, $table, array $where = []) {
-        if (!empty($where)) { 
-            $sql = '';
-            $params = [];
-            $counter = 0;
-            foreach ($where as $w) {
-                $field = $w[0];
-                $operator = $w[1];
-                $value = $w[2];
-                $params[] = [":value".$counter => $value];
-                $sql .= " AND `{$field}` {$operator} :value".$counter;
-                $counter++;
-            }
+    public function action($action, $table, array $where = [], string $custom_sql = '') {
+        $sql = '';
+        $params = [];
+        $counter = 0;
+        foreach ($where as $w) {
+            $field = $w[0];
+            $operator = $w[1];
+            $value = $w[2];
+            $params[] = [":value".$counter => $value];
+            $sql .= " AND `{$field}` {$operator} :value".$counter;
+            $counter++;
+        }
 
-            if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql, $params)->error()) {
-                return $this;
-            }
-        } else {
-            if (!$this->query("{$action} FROM `{$table}`")->error()) {
-                return $this;
-            }
+
+        if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql . ' ' . $custom_sql, $params)->error()) {
+            return $this;
         }
         return false;
     }
@@ -220,8 +215,8 @@ class Database {
      * @return Database|boolean
      * @since 1.0.1
      */
-    public function select($table, array $where = []) {
-        return($this->action('SELECT *', $table, $where));
+    public function select($table, array $where = [], string $custom_sql = '') {
+        return($this->action('SELECT *', $table, $where, $custom_sql));
     }
 
     /**

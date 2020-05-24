@@ -38,8 +38,8 @@ class CRUD extends Core\Model {
      * @return boolean
      * @since 1.1.0
      */
-    public function _find(string $table = null, array $rules = []) {
-        return($this->findAll($table, $rules));
+    public function _find(string $table = null, array $rules = [], string $custom_sql = '') {
+        return($this->findAll($table, $rules, $custom_sql));
     }
 
     /**

@@ -33,14 +33,16 @@ class Index extends Core\Controller {
         $user = $userID === null ? false : Model\User::getInstance($userID);
 
         // Get All job
-        $Job = new model\Job;
-        $jobs = $Job->findJobs([])->data();
+        $model = new model\Crud;
+        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
+        $jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
 
         // Set any dependencies, data and render the view.
         $this->View->addCSS("css/index.css");
         $this->View->addJS("js/index.jquery.js");
         $this->View->render("index/index", [
             "user" =>  !empty($user) ? $user->data() : [],
+            "categories" =>  $categories,
             "jobs" =>  $jobs,
             "title" => "Главная",
             "page" => 'index'
