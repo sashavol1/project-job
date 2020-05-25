@@ -14,6 +14,30 @@ use App\Utility;
  */
 class Cabinet extends Core\Controller {
 
+    /** @var array Validate settings. */
+    private static $_inputs_settings = [
+        "name" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 120
+        ],
+        "about" => [
+            "max_characters" => 250
+        ]
+    ];
+
+    /**
+     * beforeAction
+     * @access private
+     * @return void
+     * @since 1.1.0
+     */
+    public function beforeAction() {
+        Utility\Auth::checkAuthenticated();
+        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
+        self::$user = $userID === null ? false : Model\User::getInstance($userID);
+    }
+
     /**
      * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
      * by unauthenticated users!
@@ -23,16 +47,9 @@ class Cabinet extends Core\Controller {
      * @since 1.0.2
      */
     public function index() {
-
-        // Check that the user is unauthenticated.
-        Utility\Auth::checkAuthenticated();
-
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID);
-
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/index", [
-            "user" =>  !empty($user) ? $user->data() : [],
+            "user" =>  self::$user->data(),
             "title" => "Личный кабинет",
             "page" => 'index'
         ]);
@@ -47,18 +64,80 @@ class Cabinet extends Core\Controller {
      * @since 1.0.2
      */
     public function add() {
-
-        // Check that the user is unauthenticated.
-        Utility\Auth::checkAuthenticated();
-
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID);
-
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/add", [
-            "user" =>  !empty($user) ? $user->data() : [],
+            "user" =>  self::$user->data(),
             "title" => "Добавить объявление",
             "page" => 'index',
+            "post" => Utility\Session::get('post')
+        ]);
+    }
+
+    /**
+     * Settings
+     * @access public
+     * @example Cabinet/settings
+     * @return void
+     * @since 1.0.2
+     */
+    public function settings() {
+
+        $model = new model\Crud;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!Utility\Input::check($_POST, self::$_inputs_settings)) {
+                Utility\Session::put('post', $_POST);
+                Utility\Redirect::to(APP_URL . "cabinet/settings");
+            }
+
+            /**
+             * Загрузка аватара 
+             */
+            $dest_path = '';
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                $fileTmpPath = $_FILES['avatar']['tmp_name'];
+                $fileName = $_FILES['avatar']['name'];
+                $fileSize = $_FILES['avatar']['size'];
+                $fileType = $_FILES['avatar']['type'];
+                $fileNameCmps = explode(".", $fileName);
+                $fileExtension = strtolower(end($fileNameCmps));
+
+                //  types and size file
+                if (in_array($fileExtension, ['image/jpeg', 'jpg', 'gif', 'png', 'jpeg']) && $fileSize <= 2171860) {
+                    $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                    $uploadFileDir = './upload/avatar/';
+                    $uploadFileDirForDb = '/upload/avatar/';
+                    $dest_path = $uploadFileDirForDb . $newFileName;
+                     
+                    if (move_uploaded_file($fileTmpPath, $uploadFileDir . $newFileName)) {
+                        Utility\Flash::success('Загрузили аватар.');
+                    }
+                } else {
+                    Utility\Flash::danger('Размер файла до 2 МБ, тип файла некорретный.');
+                }
+            }
+
+            Utility\Session::put('post', []);
+            $tagId = $model->_update('users', [
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "about" => Utility\Input::trim(Utility\Input::post("about")),
+                "avatar" => $dest_path === '' ? Utility\Input::trim(Utility\Input::post("avatar_file")) : $dest_path,
+                "is_employee" => boolval(Utility\Input::post("is_employee")),
+                "is_employer" => boolval(Utility\Input::post("is_employer"))
+            ], self::$user->data()->id);
+            Utility\Flash::success('Обновили профиль.');
+            Utility\Redirect::to(APP_URL . "cabinet/settings");
+        }
+
+        $this_user = $model->_findById('users', self::$user->data()->id);
+
+        // Set any dependencies, data and render the view.
+        $this->View->render("cabinet/settings", [
+            "user" =>  self::$user->data(),
+            "this_user" =>  $this_user,
+            "title" => "Профиль",
+            "page" => 'profile',
             "post" => Utility\Session::get('post')
         ]);
     }

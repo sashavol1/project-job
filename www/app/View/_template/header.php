@@ -27,27 +27,36 @@ use App\Utility\Flash;
                         <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'uk-active' : ''; ?>">
                           <a class="nav-link" href="<?= $this->makeURL("manager"); ?>">Менеджер</a>
                         </li>
-                        </li>
-                      <?php else: ?>
-                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'uk-active' : ''; ?>">
-                          <a class="nav-link" href="<?= $this->makeURL("all"); ?>">Список</a>
-                        </li>
-                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'cabinet' ? 'uk-active' : ''; ?>">
-                          <a class="nav-link" href="<?= $this->makeURL("cabinet"); ?>">Кабинет</a>
-                        </li>
-                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'cabinet' ? 'uk-active' : ''; ?>">
-                          <a class="nav-link" href="<?= $this->makeURL("cabinet/add"); ?>">Добавить</a>
-                        </li>
-                      <?php endif; ?>
                         <li class="nav-item">
                           <a class="nav-link" href="<?= $this->makeURL("login/logout"); ?>">Выйти</a>
                         </li>
+                      <?php else: ?>
+                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'uk-active' : ''; ?>">
+                          <a class="nav-link" href="<?= $this->makeURL("all"); ?>">Вся работа</a>
+                        </li>
+                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'cabinet' ? 'uk-active' : ''; ?>">
+                          <a class="nav-link" href="<?= $this->makeURL("cabinet/add"); ?>">Добавить вакансию</a>
+                        </li>
+                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'cabinet' ? 'uk-active' : ''; ?>">
+                            <a class="nav-link" href="<?= $this->makeURL("cabinet"); ?>">Кабинет</a>
+                            <div class="uk-navbar-dropdown">
+                                <ul class="uk-nav uk-navbar-dropdown-nav">
+                                    <li><a href="<?= $this->makeURL("cabinet"); ?>">Рабочая область</a></li>
+                                    <li><a href="<?= $this->makeURL("cabinet/settings"); ?>">Настройка</a></li>
+                                    <li><a href="<?= $this->makeURL("login/index"); ?>">Выйти</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                      <?php endif; ?>
                     <?php else: ?>
+                        <li class="nav-item <?php echo isset($this->page) && $this->page == 'all' ? 'uk-active' : ''; ?>">
+                          <a class="nav-link" href="<?= $this->makeURL("all"); ?>">Вся работа</a>
+                        </li>
                         <li class="nav-item">
                           <a class="nav-link" href="<?= $this->makeURL("registration/index"); ?>">Регистрация</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="<?= $this->makeURL("login/index"); ?>">Войти</a>
+                          <a class="nav-link" href="">Войти</a>
                         </li>
                     <?php endif; ?>
                 </ul>

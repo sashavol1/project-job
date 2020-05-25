@@ -5,20 +5,20 @@ namespace App\Presenter;
 use App\Core;
 
 /**
- * Calc Presenter:
+ * Wigdet Presenter:
  *
  * @author Andrew Dyer <andrewdyer@outlook.com>
  * @since 1.0.6
  */
-class Calc extends Core\Presenter {
+class Widget extends Core\Presenter {
 
     /**
-     * Format:
+     * FieldInput
      * @access public
-     * @return array
+     * @return string
      * @since 1.0.6
      */
-    public function format() {
+    public function fieldInput(string $field = '') {
         return [
             "name" => $this->data->forename . " " . $this->data->surname
         ];
