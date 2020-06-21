@@ -34,8 +34,18 @@ class Index extends Core\Controller {
 
         // Get All job
         $model = new model\Crud;
+
         $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
-        $jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
+        //$jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
+        $jobs = $model->_custom('
+            SELECT 
+                j.*,
+                u.avatar as user_avatar,
+                u.name as user_name
+            FROM jobs j
+            INNER JOIN users u ON u.id = j.client_id 
+            ORDER BY j.id DESC LIMIT 10
+        ', []);
 
         // Set any dependencies, data and render the view.
         $this->View->addCSS("css/index.css");

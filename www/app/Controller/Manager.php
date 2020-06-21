@@ -129,8 +129,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_tags)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_tags)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/tag_edit?id=".$id);
             }
             Utility\Session::put('post', []);
@@ -166,8 +166,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_tags)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_tags)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/tag_add");
             }
             Utility\Session::put('post', []);
@@ -198,8 +198,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_categories)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_categories)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/category_edit?id=".$id);
             }
             Utility\Session::put('post', []);
@@ -237,8 +237,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_categories)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_categories)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/category_add");
             }
             Utility\Session::put('post', []);
@@ -272,8 +272,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_jobs)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_jobs)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/job_edit?id=".$id);
             }
             Utility\Session::put('post', []);
@@ -312,8 +312,8 @@ class Manager extends Core\Controller {
         $model = new model\Crud;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!Utility\Input::check($_POST, self::$_inputs_users)) {
-                Utility\Session::put('post', $_POST);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_users)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
                 Utility\Redirect::to(APP_URL . "manager/user_edit?id=".$id);
             }
             Utility\Session::put('post', []);

@@ -56,7 +56,7 @@ use App\Utility\Flash;
                           <a class="nav-link" href="<?= $this->makeURL("registration/index"); ?>">Регистрация</a>
                         </li>
                         <li class="nav-item">
-                          <a class="nav-link" href="">Войти</a>
+                          <a class="nav-link" href="<?= $this->makeURL("login/index"); ?>">Войти</a>
                         </li>
                     <?php endif; ?>
                 </ul>

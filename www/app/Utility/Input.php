@@ -90,7 +90,22 @@ class Input {
      * @since 1.0.1
      */
     public static function trim($text = "") {
-        return stripslashes(trim($text));
+        return str_replace(array('\'', '"'), '', trim($text));
+    }
+
+    /**
+     * Trim: Returns the value of a trim processing.
+     * @access public
+     * @param string $text
+     * @return string
+     * @since 1.0.1
+     */
+    public static function prepareToDbArray(array $fields = []) {
+        // $array = [];
+        // foreach($fields as $key => $value) {
+        //     $array[$key] = addslashes($value);
+        // }
+        return $fields;
     }
 
 }

@@ -1,37 +1,34 @@
 <?
 
-use App\Utility;
-
-$text = explode('%br%', $this->job->text);
 
 ?>
-
-<div class="container">
-    <h1>Редактирование работы № <?= $this->job->id; ?></h1>
-    <form action="<?= $this->makeUrl("cabinet/_edit"); ?>" method="post">
-        <div class="form-group">
-            <label for="email-input">Название <span class="text-danger">*</span></label>
-            <input type="text" id="email-input" class="form-control" name="name" value="<?= $this->job->name; ?>" />
+<div class="uk-card uk-card-default uk-card-body uk-width-1-1@m">
+    <h1>Редактирование вакансии</h1>
+    <hr>
+    <form action="<?= $this->makeUrl("cabinet/edit?id=" . $this->job->id); ?>" method="post">
+        <div class="uk-margin">
+            <label>Название <span class="text-danger">*</span></label>
+            <input type="text" class="uk-input trigger-input-translit" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : $this->job->name; ?>" />
         </div>
-        <div class="form-group">
+        <div class="uk-margin">
             <label>Анонс <span class="text-danger">*</span></label>
-            <textarea name="work_annonce" rows="3" class="form-control"><?= isset($text[0]) ? $text[0] : ''; ?></textarea>
+            <textarea name="announcement" class="uk-textarea" rows="5"><?= isset($this->post['announcement']) ? $this->post['announcement'] : $this->job->announcement; ?></textarea>
         </div>
-        <div class="form-group">
+        <div class="uk-margin">
             <label>Требования <span class="text-danger">*</span></label>
-            <textarea name="work_requirements" rows="3" class="form-control"><?= isset($text[1]) ? $text[1] : ''; ?></textarea>
+            <textarea name="requirements" class="uk-textarea" rows="5"><?= isset($this->post['requirements']) ? $this->post['requirements'] : $this->job->requirements; ?></textarea>
         </div>
-        <div class="form-group">
-            <label>Условия <span class="text-danger">*</span></label>
-            <textarea name="work_conditions" rows="3" class="form-control"><?= isset($text[2]) ? $text[2] : ''; ?></textarea>
+        <div class="uk-margin">
+            <label>Вознаграждение, от <span class="text-danger">*</span></label>
+            <input type="text" class="uk-input" name="salary_from" value="<?= isset($this->post['salary_from']) ? $this->post['salary_from'] : $this->job->salary_from; ?>" />
         </div>
-        <div class="form-group">
-            <label>Категории <span class="text-danger">*</span></label>
-            <select class="form-control">
-                <option value="">Выбрать категории</option>
-            </select>
+        <div class="uk-margin">
+            <label>Вознаграждение, до <span class="text-danger">*</span></label>
+            <input type="text" class="uk-input" name="salary_to" value="<?= isset($this->post['salary_to']) ? $this->post['salary_to'] : $this->job->salary_to; ?>" />
         </div>
-
+        <div class="uk-margin">
+            <label><input class="uk-checkbox" type="checkbox" name="salary_type" <?= !boolval($this->job->salary_type) ? '' : 'checked'; ?> > Оплата по договоренности</label>
+        </div>
         <input type="hidden" name="csrf_token" value="<?= App\Utility\Token::generate(); ?>" />
         <button type="submit" class="uk-button uk-button-primary">Добавить</button>
     </form>

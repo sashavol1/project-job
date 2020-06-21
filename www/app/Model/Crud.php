@@ -82,5 +82,18 @@ class CRUD extends Core\Model {
     public function _delete(string $table = null, int $id = null) {
         return( $this->delete($table, ['id', "=", $id]) );
     }
+    
+    /**
+     * Custom query.
+     * @access public
+     * @param string $table
+     * @param int $id
+     * @return array
+     * @since 1.1.0
+     * @throws Exception
+     */
+    public function _custom(string $sql = '', array $params = []) {
+        return($this->Db->custom($sql, $params)->all());
+    }
 
 }

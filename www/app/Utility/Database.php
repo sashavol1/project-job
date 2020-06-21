@@ -249,4 +249,16 @@ class Database {
         return false;
     }
 
+    /**
+     * Custom:
+     * @access public
+     * @param string $sql
+     * @param array $fields
+     * @return boolean
+     * @since 1.0.1
+     */
+    public function custom(string $sql = '', array $params = []) {
+        return $this->query($sql, [$params]);
+    }
+
 }
