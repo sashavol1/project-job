@@ -90,7 +90,7 @@ class Manager extends Core\Controller {
     }
 
     /**
-     * Index: Renders the manager view. 
+     * Index: Renders the manager view.
      * @access public
      * @example manager/index
      * @return void

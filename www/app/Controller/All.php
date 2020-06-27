@@ -38,7 +38,7 @@ class All extends Core\Controller {
      * @since 1.0.2
      */
     public function index() {
-        Utility\Redirect::to(APP_URL);
+        // Utility\Redirect::to(APP_URL);
     }
 
     /**
@@ -66,6 +66,7 @@ class All extends Core\Controller {
             WHERE j.slug = \'%s\'
             ORDER BY j.id DESC LIMIT 10
         ', addslashes($urls[1])), []);
+        $model->_custom('UPDATE jobs SET views = views + 1', []);
 
         // Set any dependencies, data and render the view.
         $this->View->render("all/detail", [

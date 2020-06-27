@@ -3,6 +3,7 @@
 // var_dump($this->tags);
 
 ?>
+<a href="/cabinet/" class="uk-button uk-button-primary uk-margin-bottom"><span class="uk-margin-small-right" uk-icon="arrow-left"></span></a>
 <div class="uk-card uk-card-default uk-card-body uk-width-1-1@m">
     <h1>Добавить вакансию</h1>
     <hr>
@@ -11,13 +12,17 @@
             <label>Название <span class="text-danger">*</span></label>
             <input type="text" class="uk-input" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : ''; ?>" />
         </div>
-        <div class="uk-margin">
+        <div class="uk-margin control-textarea" data-max-symbol="255">
             <label>Анонс <span class="text-danger">*</span></label>
             <textarea name="announcement" class="uk-textarea" rows="5"><?= isset($this->post['announcement']) ? $this->post['announcement'] : ''; ?></textarea>
         </div>
-        <div class="uk-margin">
+        <div class="uk-margin control-textarea" data-max-symbol="255">
             <label>Требования <span class="text-danger">*</span></label>
             <textarea name="requirements" class="uk-textarea" rows="5"><?= isset($this->post['requirements']) ? $this->post['requirements'] : ''; ?></textarea>
+        </div>
+        <div class="uk-margin control-textarea" data-max-symbol="1000">
+            <label>Что делать? <span class="text-danger">*</span></label>
+            <textarea name="duties" class="uk-textarea" rows="5"><?= isset($this->post['duties']) ? $this->post['duties'] : ''; ?></textarea>
         </div>
         <div class="uk-margin">
             <label>Вознаграждение, от <span class="text-danger">*</span></label>

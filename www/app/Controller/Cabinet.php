@@ -43,6 +43,11 @@ class Cabinet extends Core\Controller {
             "min_characters" => 4,
             "max_characters" => 250
         ],
+        "duties" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 1000
+        ],
         "salary_from" => [
             "min_int" => 0,
             "max_int" => 1000000
@@ -77,7 +82,20 @@ class Cabinet extends Core\Controller {
         Utility\Session::put('post', []);
 
         $model = new model\Crud;
-        $jobs = $model->_find('jobs', [['client_id', '=', self::$user->data()->id]], 'ORDER BY id DESC')->data();
+        $jobs = $model->_find('jobs', [['client_id', '=', self::$user->data()->id]], 'ORDER BY dt_chg DESC, dt_add DESC')->data();
+
+        // Кидаем в архив
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $id_to_archive = intval(Utility\Input::trim(Utility\Input::get("to_archive")));
+            $model = new model\Crud;
+            $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_archive]])->data();
+
+            if (!empty($cur_job)) {
+                $model->_update('jobs', ["status" => 'archive'], $id_to_archive);
+                Utility\Flash::info('Добавили в архив ' . $cur_job->name);
+                Utility\Redirect::to(APP_URL . "cabinet");
+            }
+        } 
 
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/index", [
@@ -106,15 +124,20 @@ class Cabinet extends Core\Controller {
             Utility\Session::put('post', []);
             $jobId = $model->_create('jobs', [
                 "name" => Utility\Input::trim(Utility\Input::post("name")),
-                "slug" => Utility\Helper::generateRandomStringForUrl(12),
+                "status" => 'active',
                 "dt_add" => date('Y-m-d H:i:s'),
+                "dt_chg" => date('Y-m-d H:i:s'),
                 "client_id" => self::$user->data()->id,
                 "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
                 "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
+                "duties" => Utility\Input::trim(Utility\Input::post("duties")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
                 "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
             ]);
+            $model->_update('jobs',[
+                "slug" =>  $jobId . '-' . Utility\Helper::getTranslit(Utility\Input::trim(Utility\Input::post("name")))
+            ], $jobId);
             Utility\Flash::success('Добавили вакансию!');
             Utility\Redirect::to(APP_URL . "cabinet/edit?id=" . $jobId);
         }
@@ -150,6 +173,7 @@ class Cabinet extends Core\Controller {
                 "dt_chg" => date('Y-m-d H:i:s'),
                 "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
                 "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
+                "duties" => Utility\Input::trim(Utility\Input::post("duties")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
                 "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
@@ -158,7 +182,7 @@ class Cabinet extends Core\Controller {
             Utility\Redirect::to(APP_URL . "cabinet/edit?id=".$id);
         }
 
-        $current_job = $model->_find('jobs', [['id', "=", $id], ['client_id', "=", (int) self::$user->data()->id]])->data();
+        $current_job = $model->_find('jobs', [['id', "=", $id], ['client_id', "=", (int) self::$user->data()->id], ['status', "=", 'active']])->data();
         if (empty($current_job)) {
             Utility\Redirect::to(APP_URL . "cabinet");
         }

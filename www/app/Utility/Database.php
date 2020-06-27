@@ -69,8 +69,7 @@ class Database {
             $sql .= " AND `{$field}` {$operator} :value".$counter;
             $counter++;
         }
-
-
+        
         if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql . ' ' . $custom_sql, $params)->error()) {
             return $this;
         }

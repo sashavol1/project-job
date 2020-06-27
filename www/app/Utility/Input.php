@@ -90,7 +90,7 @@ class Input {
      * @since 1.0.1
      */
     public static function trim($text = "") {
-        return str_replace(array('\'', '"'), '', trim($text));
+        return htmlspecialchars(str_replace(array('\'', '"'), '', trim($text)));
     }
 
     /**

@@ -5,6 +5,7 @@
 // var_dump($this->tags);
 
 ?>
+<a href="/cabinet/" class="uk-button uk-button-primary uk-margin-bottom"><span class="uk-margin-small-right" uk-icon="arrow-left"></span></a>
 <div class="uk-card uk-card-default uk-card-body uk-width-1-1@m">
     <h1>Редактирование профиля</h1>
     <hr>

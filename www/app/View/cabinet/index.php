@@ -9,7 +9,9 @@
                     <div class="uk-grid-small uk-flex-middle" uk-grid>
                         <div class="uk-width-expand">
                             <h3 class="uk-card-title uk-margin-remove-bottom"><?= $j->name; ?> </h3>
-                            <p class="uk-text-meta uk-margin-remove-top"><time datetime="<?= $j->dt_add; ?>"><?= $j->dt_add; ?></time></p>
+                            <p class="uk-text-meta uk-margin-remove-top">
+                                Добавлено: <time datetime="<?= $j->dt_add; ?>"><?= $j->dt_add; ?></time> | Изменено: <time datetime="<?= $j->dt_chg; ?>"><?= $j->dt_chg; ?></time>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -20,9 +22,9 @@
                     <? if ($j->status == 'archive'): ?>
                         <span>Работа в архиве</span>
                     <? else: ?>
-                        <a href="/all/<?= $j->slug; ?>" class="uk-button uk-button-text uk-margin-right">Публичная страница</a>
+                        <a href="/all/<?= $j->slug; ?>" class="uk-button uk-button-text uk-margin-right" target="_blank">Публичная страница</a>
                         <a href="/cabinet/edit?id=<?= $j->id; ?>" class="uk-button uk-button-text uk-margin-right">Редактировать</a>
-                        <a href="/cabinet?to_archive=<?= $j->id; ?>" class="uk-button uk-button-text uk-margin-right">В архив</a>
+                        <a href="/cabinet?to_archive=<?= $j->id; ?>" class="uk-button uk-button-text uk-margin-right" onclick="return confirm('Отправить в архив?')">В архив</a>
                     <? endif; ?>
                 </div>
             </div>
