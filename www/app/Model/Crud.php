@@ -24,10 +24,11 @@ class CRUD extends Core\Model {
      * @throws Exception
      */
     public function _create(string $table = null, array $fields) {
-        if (!$id = $this->create($table, [$fields])) {
-            throw new Exception('Ошибка в создании');
-        }
-        return $id;
+        // if (!$id = $this->create($table, [$fields])) {
+        //     throw new Exception('Ошибка в создании');
+        // }
+        // return $id;
+        return $this->create($table, [$fields]);
     }
 
     /**

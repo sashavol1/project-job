@@ -10,7 +10,7 @@ use App\Utility;
  * Cabinet Controller:
  *
  * @author Andrew Dyer <andrewdyer@outlook.com>
- * @since 1.0.2
+ * @since 1.1.0
  */
 class Cabinet extends Core\Controller {
 
@@ -47,6 +47,11 @@ class Cabinet extends Core\Controller {
             "required" => true,
             "min_characters" => 4,
             "max_characters" => 1000
+        ],
+        "contacts" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 250
         ],
         "salary_from" => [
             "min_int" => 0,
@@ -115,11 +120,13 @@ class Cabinet extends Core\Controller {
      */
     public function add() {
         $model = new model\Crud;
+        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
             if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_job)) {
                 Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
-                Utility\Redirect::to(APP_URL . "cabinet/add");
+                Utility\Redirect::to(APP_URL . "cabinet/add/");
             }
             Utility\Session::put('post', []);
             $jobId = $model->_create('jobs', [
@@ -131,21 +138,39 @@ class Cabinet extends Core\Controller {
                 "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
                 "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
                 "duties" => Utility\Input::trim(Utility\Input::post("duties")),
+                "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
                 "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
             ]);
+
             $model->_update('jobs',[
                 "slug" =>  $jobId . '-' . Utility\Helper::getTranslit(Utility\Input::trim(Utility\Input::post("name")))
             ], $jobId);
+
+            // Категории
+            if (is_array(Utility\Input::post("categories"))) {
+                foreach (Utility\Input::post("categories") as $c) {
+                    $model->_create('category_job', [
+                        "cat_id" => intval($c),
+                        "job_id" => intval($jobId)
+                    ]);
+                }
+            }
+
             Utility\Flash::success('Добавили вакансию!');
-            Utility\Redirect::to(APP_URL . "cabinet/edit?id=" . $jobId);
+            Utility\Redirect::to(APP_URL . "cabinet/edit/?id=" . $jobId);
         }
+
         // Set any dependencies, data and render the view.
+        $this->View->addCSS("bower_components/chosen/chosen.min.css");
+        $this->View->addJS("bower_components/chosen/chosen.jquery.min.js");
+        $this->View->addJS("js/job.js");
         $this->View->render("cabinet/add", [
             "user" =>  self::$user->data(),
             "title" => "Добавить объявление",
             "page" => 'cabinet',
+            "categories" => $categories,
             "post" => Utility\Session::get('post')
         ]);
     }
@@ -161,11 +186,20 @@ class Cabinet extends Core\Controller {
 
         $id = intval(Utility\Input::trim(Utility\Input::get("id")));
         $model = new model\Crud;
+        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
+        $categories_checked = $model->_custom(sprintf('
+            SELECT 
+                c.*
+            FROM jobs 
+                LEFT JOIN category_job cj ON cj.job_id = %d
+                LEFT JOIN categories c ON c.id = cj.cat_id
+                WHERE jobs.id = %d
+        ', intval($id), intval($id)), []);
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_job)) {
                 Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
-                Utility\Redirect::to(APP_URL . "cabinet/edit?id=".$id);
+                Utility\Redirect::to(APP_URL . "cabinet/edit/?id=".$id);
             }
             Utility\Session::put('post', []);
             $model->_update('jobs',[
@@ -174,12 +208,28 @@ class Cabinet extends Core\Controller {
                 "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
                 "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
                 "duties" => Utility\Input::trim(Utility\Input::post("duties")),
+                "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
                 "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
             ], $id);
+
+            // Сохранение категории
+            $model->_custom(sprintf('DELETE FROM category_job WHERE job_id = %d', intval($id)), []); // Удаляем всё
+            if (is_array(Utility\Input::post("categories"))) {
+                if (count(Utility\Input::post("categories")) <= 3) {
+                    foreach (Utility\Input::post("categories") as $c) {
+                        $model->_create('category_job', [
+                            "cat_id" => intval($c),
+                            "job_id" => intval($id)
+                        ]);
+                    }
+                }
+            }
+            $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
+
             Utility\Flash::success('Обновили вакансию.');
-            Utility\Redirect::to(APP_URL . "cabinet/edit?id=".$id);
+            Utility\Redirect::to(APP_URL . "cabinet/edit/?id=".$id);
         }
 
         $current_job = $model->_find('jobs', [['id', "=", $id], ['client_id', "=", (int) self::$user->data()->id], ['status', "=", 'active']])->data();
@@ -188,9 +238,14 @@ class Cabinet extends Core\Controller {
         }
 
         // Set any dependencies, data and render the view.
+        $this->View->addCSS("bower_components/chosen/chosen.min.css");
+        $this->View->addJS("bower_components/chosen/chosen.jquery.min.js");
+        $this->View->addJS("js/job.js");
         $this->View->render("cabinet/edit", [
             "job" => $current_job[0],
-            "user" =>  self::$user->data(),
+            "user" => self::$user->data(),
+            "categories" => $categories,
+            "categories_checked" => $categories_checked,
             "title" => "Редактировать объявление",
             "page" => 'index',
             "post" => Utility\Session::get('post')
@@ -215,6 +270,7 @@ class Cabinet extends Core\Controller {
                 Utility\Redirect::to(APP_URL . "cabinet/settings");
             }
 
+
             /*
              * Загрузка аватара 
              */
@@ -225,14 +281,48 @@ class Cabinet extends Core\Controller {
                 $dest_path = '/upload/avatar/' . $filename;
             }
 
+
+            /*
+             * Сохр обычных хар-ки
+             */
             Utility\Session::put('post', []);
-            $tagId = $model->_update('users', [
+            $model->_update('users', [
                 "name" => Utility\Input::trim(Utility\Input::post("name")),
                 "about" => Utility\Input::trim(Utility\Input::post("about")),
                 "avatar" => $dest_path === '' ? Utility\Input::trim(Utility\Input::post("avatar_file")) : $dest_path,
                 "is_employee" => boolval(Utility\Input::post("is_employee")),
                 "is_employer" => boolval(Utility\Input::post("is_employer"))
             ], self::$user->data()->id);
+
+
+            /*
+             * Сохранение контактов
+             */
+            // $new_contacts = json_decode(urldecode(trim(Utility\Input::post("contacts"))), true);
+            // foreach($contacts as $c) {
+            //     if (!in_array($c->id, array_column($new_contacts, 'id'))) {
+            //         // delete
+            //         $jobs = $model->_custom(sprintf('DELETE FROM users_contacts WHERE user_id=%d AND id=%d', self::$user->data()->id, $c->id), []); // delete prev
+            //     }
+            // }
+            // foreach($new_contacts as $c) {
+            //     if (!in_array($c['id'], array_column($contacts, 'id'))) {
+            //         // create
+            //         $contactId = $model->_create('users_contacts', [
+            //             "user_id" => self::$user->data()->id,
+            //             "type" => $c['type'],
+            //             "value" => $c['val']
+            //         ]);
+            //     } else {
+            //         // update
+            //         $model->_update('users_contacts',[
+            //             "user_id" => self::$user->data()->id,
+            //             "type" => $c['type'],
+            //             "value" => $c['val']
+            //         ], $c['id']);
+            //     }
+            // }
+
             Utility\Flash::success('Обновили профиль.');
             Utility\Redirect::to(APP_URL . "cabinet/settings");
         }

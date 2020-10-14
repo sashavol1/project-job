@@ -60,6 +60,8 @@ class UserLogin {
      */
     public static function login() {
 
+        Utility\Text::get("LOGIN_INVALID_PASSWORD");
+
         // Validate the login form inputs.
         if (!Utility\Input::check($_POST, self::$_inputs)) {
             return false;

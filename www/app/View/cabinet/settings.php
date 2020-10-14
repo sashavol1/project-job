@@ -2,14 +2,15 @@
 
 <?
 
-// var_dump($this->tags);
+$this->addJS(['js/setting.js']);
 
 ?>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.3/inputmask.min.js'></script>
 <a href="/cabinet/" class="uk-button uk-button-primary uk-margin-bottom"><span class="uk-margin-small-right" uk-icon="arrow-left"></span></a>
 <div class="uk-card uk-card-default uk-card-body uk-width-1-1@m">
     <h1>Редактирование профиля</h1>
     <hr>
-    <form action="<?= $this->makeUrl("cabinet/settings"); ?>" method="post" enctype="multipart/form-data">
+    <form action="<?= $this->makeUrl("cabinet/settings/"); ?>" method="post" enctype="multipart/form-data">
         <div class="uk-margin">
             <label>Название <span class="text-danger">*</span></label>
             <input type="text" class="uk-input trigger-input-translit" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : $this->this_user->name; ?>" />
@@ -43,6 +44,6 @@
             <label><input class="uk-checkbox" type="checkbox" name="is_employer" <?= !boolval($this->this_user->is_employer) ? '' : 'checked'; ?> > Работодатель</label>
         </div>
         <input type="hidden" name="csrf_token" value="<?= App\Utility\Token::generate(); ?>" />
-        <button type="submit" class="uk-button uk-button-primary">Добавить</button>
+        <button type="submit" class="uk-button uk-button-primary" id="add">Добавить</button>
     </form>
 </div>

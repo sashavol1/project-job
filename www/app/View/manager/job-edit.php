@@ -8,7 +8,7 @@
 <div class="container">
     <h1>Редактирование работы <?= is_null($this->job->dt_del) ? '<span class="uk-label uk-label-success">Активная</span>' : '<span class="uk-label uk-label-danger">Удалена</span>'; ?></h1>
     <hr>
-    <form action="<?= $this->makeUrl("manager/job_edit?id=" . $this->job->id); ?>" method="post">
+    <form action="<?= $this->makeUrl("manager/job_edit/?id=" . $this->job->id); ?>" method="post">
         <div class="uk-margin">
             <label>Название <span class="text-danger">*</span></label>
             <input type="text" class="uk-input trigger-input-translit" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : $this->job->name; ?>" />

@@ -8,6 +8,8 @@ use App\Utility\Flash;
 <html>
     <head>
         <title><?= $this->escapeHTML($this->title . " - " . APP_NAME); ?></title>
+        <meta name="description" content="<?= $this->description; ?>" />
+        <meta name="keywords" content="<?= $this->keywords; ?>" />
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="<?= $this->makeURL("favicon.ico"); ?>" rel="shortcut icon">

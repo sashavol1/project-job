@@ -1,6 +1,6 @@
 <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
     <h3 class="uk-card-title">Регистрация</h3>
-    <form action="<?= $this->makeUrl("registration/_add"); ?>" method="post">
+    <form action="<?= $this->makeUrl("registration/_add/"); ?>" method="post">
         <div class="uk-margin">
             <label for="my_name">Имя / Организация <span class="text-danger">*</span></label>
             <input type="text" value="<?= isset($this->post["name"]) ? $this->post["name"] : ''; ?>" id="my_name" class="uk-input" name="name" />

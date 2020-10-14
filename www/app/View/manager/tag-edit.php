@@ -8,7 +8,7 @@
 <div class="container">
     <h1>Редактирование ТЭГа</h1>
     <hr>
-    <form action="<?= $this->makeUrl("manager/tag_edit?id=" . $this->tag->id); ?>" method="post">
+    <form action="<?= $this->makeUrl("manager/tag_edit/?id=" . $this->tag->id); ?>" method="post">
         <div class="uk-margin">
             <label>Название <span class="text-danger">*</span></label>
             <input type="text" class="uk-input" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : $this->tag->name; ?>" />

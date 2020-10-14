@@ -12,7 +12,6 @@ body {
     color: #fff;
 }
 
-
 .uk-navbar-container .uk-navbar-nav>li>a {
     color: #fff;
 }
@@ -23,3 +22,8 @@ body {
 #header {}
 #content {}
 #footer {}
+
+.uk-contacts {
+    border: 1px solid #ddd;
+    padding: 25px;
+}

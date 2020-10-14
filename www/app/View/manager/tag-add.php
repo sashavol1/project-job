@@ -8,7 +8,7 @@
 <div class="container">
     <h1>Добавить ТЭГ</h1>
     <hr>
-    <form action="<?= $this->makeUrl("manager/tag_add"); ?>" method="post">
+    <form action="<?= $this->makeUrl("manager/tag_add/"); ?>" method="post">
         <div class="uk-margin">
             <label>Название <span class="text-danger">*</span></label>
             <input type="text" class="uk-input" name="name" value="<?= isset($this->post['name']) ? $this->post['name'] : ''; ?>" />
