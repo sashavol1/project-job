@@ -68,8 +68,11 @@ return [
         "VALIDATE_MISSING_INPUT" => "Проверьте поле %ITEM%!",
         "VALIDATE_MISSING_METHOD" => "Проверьте поле %ITEM%!",
         "VALIDATE_MATCHES_RULE" => "%RULE_VALUE% не совпадает %ITEM%.",
-        "VALIDATE_MAX_CHARACTERS_RULE" => "%ITEM% максимальная длниа %RULE_VALUE% символов.",
+        "VALIDATE_MAX_CHARACTERS_RULE" => "%ITEM% максимальная длина %RULE_VALUE% символов.",
         "VALIDATE_MIN_CHARACTERS_RULE" => "%ITEM% минимальная длина %RULE_VALUE% символов.",
+        "VALIDATE_MAX_INT_RULE" => "%ITEM% максимальное число %RULE_VALUE%.",
+        "VALIDATE_MIN_INT_RULE" => "%ITEM% минимальное число %RULE_VALUE%.",
+        "VALIDATE_INARRAY_RULE" => "В поле %ITEM% попало другое значение.",
         "VALIDATE_REQUIRED_RULE" => "%ITEM% обязательное поле!",
         "VALIDATE_UNIQUE_RULE" => "%ITEM% уже есть.",
         "" => "",
@@ -77,6 +80,12 @@ return [
         // Texts
         // =====================================================================
         "" => "",
+    ],
+    // 
+    // Routes
+    // =========================================================================
+    "ROUTE" => [
+        "all", "cat"
     ],
     // 
     // Config

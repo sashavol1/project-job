@@ -5,6 +5,7 @@ namespace App\Core;
 use Exception;
 use ReflectionClass;
 use ReflectionMethod;
+use App\Utility;
 use App\Utility\Input;
 use App\Utility\Redirect;
 
@@ -24,6 +25,9 @@ class App {
 
     /** @var array The parameters passed to the controller. */
     private $_params = [];
+
+    /** @var array Проверяем не является ли раздел с динамичными страницами. Универсальное название страницы с динамикой detail.php */
+    private $_has_route = false;
 
     /**
      * Construct: Processes the app by parses the URL and sets the class, class
@@ -54,6 +58,7 @@ class App {
     private function _getClass() {
         if (isset($this->_params[0]) and ! empty($this->_params[0])) {
             $this->_class = CONTROLLER_PATH . ucfirst(strtolower($this->_params[0]));
+            $this->_has_route = in_array($this->_params[0], Utility\Config::get("ROUTE")) && count($this->_params) === 2; // Обязательное условие для динамичных страниц, вложенность не более двух, класс + метод
             unset($this->_params[0]);
         }
         if (!class_exists($this->_class)) {
@@ -77,14 +82,22 @@ class App {
             unset($this->_params[1]);
         }
 
-        // Check to ensure the requested controller method exists.
-        if (!(new ReflectionClass($this->_class))->hasMethod($this->_method)) {
-            throw new Exception("The controller method {$this->_method} does not exist!");
-        }
+        if (!$this->_has_route) {            
+            // Check to ensure the requested controller method exists.
+            if (!(new ReflectionClass($this->_class))->hasMethod($this->_method)) {
+                // сюда попадаем если пусто в запросе
+                throw new Exception("The controller method {$this->_method} does not exist!");
+            }
 
-        // Check to ensure the requested controller method is pubic.
-        if (!(new ReflectionMethod($this->_class, $this->_method))->isPublic()) {
-            throw new Exception("The controller method {$this->_method} is not accessible!");
+            // Check to ensure the requested controller method is pubic.
+            if (!(new ReflectionMethod($this->_class, $this->_method))->isPublic()) {
+                throw new Exception("The controller method {$this->_method} is not accessible!");
+            }
+        } else {
+            /*
+            Универсальное название метода, для страниц которые имеют динамическое название или slug
+             */
+            $this->_method = 'detail';
         }
     }
 

@@ -6,12 +6,18 @@ namespace App\Core;
  * Core View:
  *
  * @author Andrew Dyer <andrewdyer@outlook.com>
- * @since 1.0
+ * @since 1.0.1
  */
 class View {
 
     /** @var string The title of the page. */
     protected $title = "";
+
+    /** @var string The description of the page. */
+    protected $description = "";
+
+    /** @var string The keywords of the page. */
+    protected $keywords = "";
 
     /** @var string The HTML used to load in external style sheets. */
     private $_linkTags = "";

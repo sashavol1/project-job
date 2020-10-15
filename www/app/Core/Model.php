@@ -88,8 +88,8 @@ class Model {
      * @return \App\Core\Model
      * @since 1.0.3
      */
-    protected function findAll($table, array $where = []) {
-        $data = $this->Db->select($table, $where);
+    protected function findAll($table, array $where = [], string $custom_sql = '') {
+        $data = $this->Db->select($table, $where, $custom_sql);
         if ($data->count()) {
             $this->data = $data->all();
         }
@@ -110,7 +110,7 @@ class Model {
         if (!$recordID and $this->exists()) {
             $recordID = $this->data()->id;
         }
-        return(!$this->Db->update($table, $recordID, $fields));
+        return($this->Db->update($table, $recordID, $fields));
     }
 
     /**

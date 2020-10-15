@@ -57,27 +57,21 @@ class Database {
      * @return Database|boolean
      * @since 1.0.1
      */
-    public function action($action, $table, array $where = []) {
-        if (!empty($where)) { 
-            $sql = '';
-            $params = [];
-            $counter = 0;
-            foreach ($where as $w) {
-                $field = $w[0];
-                $operator = $w[1];
-                $value = $w[2];
-                $params[] = [":value".$counter => $value];
-                $sql .= " AND `{$field}` {$operator} :value".$counter;
-                $counter++;
-            }
-
-            if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql, $params)->error()) {
-                return $this;
-            }
-        } else {
-            if (!$this->query("{$action} FROM `{$table}`")->error()) {
-                return $this;
-            }
+    public function action($action, $table, array $where = [], string $custom_sql = '') {
+        $sql = '';
+        $params = [];
+        $counter = 0;
+        foreach ($where as $w) {
+            $field = $w[0];
+            $operator = $w[1];
+            $value = $w[2];
+            $params[] = [":value".$counter => $value];
+            $sql .= " AND `{$field}` {$operator} :value".$counter;
+            $counter++;
+        }
+        
+        if (!$this->query("{$action} FROM `{$table}` WHERE 1 = 1 " . $sql . ' ' . $custom_sql, $params)->error()) {
+            return $this;
         }
         return false;
     }
@@ -158,12 +152,14 @@ class Database {
     public function insert($table, array $fields) {
         if (count($fields)) {
             $params = [];
-            foreach ($fields as $key => $value) {
-                $params[":{$key}"] = $value;
+            foreach ($fields as $f) {
+                foreach ($f as $key => $value) {
+                    $params[":{$key}"] = $value;
+                }
             }
-            $columns = implode("`, `", array_keys($fields));
+            $columns = implode("`, `", array_keys($fields[0]));
             $values = implode(", ", array_keys($params));
-            if (!$this->query("INSERT INTO `{$table}` (`{$columns}`) VALUES({$values})", $params)->error()) {
+            if (!$this->query("INSERT INTO `{$table}` (`{$columns}`) VALUES({$values})", [$params])->error()) {
                 return($this->_PDO->lastInsertId());
             }
         }
@@ -182,7 +178,6 @@ class Database {
         $this->_count = 0;
         $this->_error = false;
         $this->_results = [];
-
         if (($this->_query = $this->_PDO->prepare($sql))) {
             foreach ($params as $p) {
                 foreach ($p as $key => $value) {
@@ -219,8 +214,8 @@ class Database {
      * @return Database|boolean
      * @since 1.0.1
      */
-    public function select($table, array $where = []) {
-        return($this->action('SELECT *', $table, $where));
+    public function select($table, array $where = [], string $custom_sql = '') {
+        return($this->action('SELECT *', $table, $where, $custom_sql));
     }
 
     /**
@@ -246,11 +241,23 @@ class Database {
                 $x ++;
             }
             
-            if (!$this->query("UPDATE `{$table}` SET {$set} WHERE `id` = {$id}", $params)->error()) {
+            if (!$this->query("UPDATE `{$table}` SET {$set} WHERE `id` = {$id}", [$params])->error()) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * Custom:
+     * @access public
+     * @param string $sql
+     * @param array $fields
+     * @return boolean
+     * @since 1.0.1
+     */
+    public function custom(string $sql = '', array $params = []) {
+        return $this->query($sql, [$params]);
     }
 
 }

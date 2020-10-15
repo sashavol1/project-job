@@ -10,9 +10,70 @@ use App\Utility;
  * Cabinet Controller:
  *
  * @author Andrew Dyer <andrewdyer@outlook.com>
- * @since 1.0.2
+ * @since 1.1.0
  */
 class Cabinet extends Core\Controller {
+
+    /** @var array Validate settings. */
+    private static $_inputs_settings = [
+        "name" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 120
+        ],
+        "about" => [
+            "max_characters" => 250
+        ]
+    ];
+
+    /** @var array Validate settings. */
+    private static $_inputs_job = [
+        "name" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 120
+        ],
+        "announcement" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 250
+        ],
+        "requirements" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 250
+        ],
+        "duties" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 1000
+        ],
+        "contacts" => [
+            "required" => true,
+            "min_characters" => 4,
+            "max_characters" => 250
+        ],
+        "salary_from" => [
+            "min_int" => 0,
+            "max_int" => 1000000
+        ],
+        "salary_to" => [
+            "min_int" => 0,
+            "max_int" => 1000000
+        ]
+    ];
+
+    /**
+     * beforeAction
+     * @access private
+     * @return void
+     * @since 1.1.0
+     */
+    public function beforeAction() {
+        Utility\Auth::checkAuthenticated();
+        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
+        self::$user = $userID === null ? false : Model\User::getInstance($userID);
+    }
 
     /**
      * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
@@ -23,71 +84,99 @@ class Cabinet extends Core\Controller {
      * @since 1.0.2
      */
     public function index() {
+        Utility\Session::put('post', []);
 
-        // Check that the user is unauthenticated.
-        Utility\Auth::checkAuthenticated();
+        $model = new model\Crud;
+        $jobs = $model->_find('jobs', [['client_id', '=', self::$user->data()->id]], 'ORDER BY dt_chg DESC, dt_add DESC')->data();
 
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID);
+        // Кидаем в архив
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $id_to_archive = intval(Utility\Input::trim(Utility\Input::get("to_archive")));
+            $model = new model\Crud;
+            $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_archive]])->data();
+
+            if (!empty($cur_job)) {
+                $model->_update('jobs', ["status" => 'archive'], $id_to_archive);
+                Utility\Flash::info('Добавили в архив ' . $cur_job->name);
+                Utility\Redirect::to(APP_URL . "cabinet");
+            }
+        } 
 
         // Set any dependencies, data and render the view.
         $this->View->render("cabinet/index", [
-            "user" =>  !empty($user) ? $user->data() : [],
+            "user" =>  self::$user->data(),
             "title" => "Личный кабинет",
+            "jobs" => $jobs,
             "page" => 'index'
         ]);
     }
 
     /**
-     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
-     * by unauthenticated users!
+     * Add job
      * @access public
      * @example Cabinet/add
      * @return void
      * @since 1.0.2
      */
     public function add() {
+        $model = new model\Crud;
+        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
 
-        // Check that the user is unauthenticated.
-        Utility\Auth::checkAuthenticated();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID);
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_job)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
+                Utility\Redirect::to(APP_URL . "cabinet/add/");
+            }
+            Utility\Session::put('post', []);
+            $jobId = $model->_create('jobs', [
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "status" => 'active',
+                "dt_add" => date('Y-m-d H:i:s'),
+                "dt_chg" => date('Y-m-d H:i:s'),
+                "client_id" => self::$user->data()->id,
+                "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
+                "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
+                "duties" => Utility\Input::trim(Utility\Input::post("duties")),
+                "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
+                "salary_from" => intval(Utility\Input::post("salary_from")),
+                "salary_to" => intval(Utility\Input::post("salary_to")),
+                "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
+            ]);
+
+            $model->_update('jobs',[
+                "slug" =>  $jobId . '-' . Utility\Helper::getTranslit(Utility\Input::trim(Utility\Input::post("name")))
+            ], $jobId);
+
+            // Категории
+            if (is_array(Utility\Input::post("categories"))) {
+                foreach (Utility\Input::post("categories") as $c) {
+                    $model->_create('category_job', [
+                        "cat_id" => intval($c),
+                        "job_id" => intval($jobId)
+                    ]);
+                }
+            }
+
+            Utility\Flash::success('Добавили вакансию!');
+            Utility\Redirect::to(APP_URL . "cabinet/edit/?id=" . $jobId);
+        }
 
         // Set any dependencies, data and render the view.
+        $this->View->addCSS("bower_components/chosen/chosen.min.css");
+        $this->View->addJS("bower_components/chosen/chosen.jquery.min.js");
+        $this->View->addJS("js/job.js");
         $this->View->render("cabinet/add", [
-            "user" =>  !empty($user) ? $user->data() : [],
+            "user" =>  self::$user->data(),
             "title" => "Добавить объявление",
-            "page" => 'index',
+            "page" => 'cabinet',
+            "categories" => $categories,
             "post" => Utility\Session::get('post')
         ]);
     }
 
     /**
-     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
-     * by unauthenticated users!
-     * @access public
-     * @example Cabinet/add
-     * @return void
-     * @since 1.0.2
-     */
-    public function _add() {
-
-        // Check that the user is authenticated.
-        Utility\Auth::checkAuthenticated();
-        
-        // Process the register request, redirecting to the login controller if
-        // successful or back to the register controller if not.
-        Utility\Session::put('post', $_POST);
-        if (Model\JobAdd::add()) {
-            Utility\Redirect::to(APP_URL . "cabinet/add");
-        }
-        Utility\Redirect::to(APP_URL . "cabinet/add");
-    }
-
-    /**
-     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
-     * by unauthenticated users!
+     * Edit job
      * @access public
      * @example Cabinet/add
      * @return void
@@ -95,49 +184,158 @@ class Cabinet extends Core\Controller {
      */
     public function edit() {
 
-        // Check that the user is unauthenticated.
-        Utility\Auth::checkAuthenticated();
-
         $id = intval(Utility\Input::trim(Utility\Input::get("id")));
-        if (!$id) Utility\Redirect::to(APP_URL . "cabinet");
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID)->data();
+        $model = new model\Crud;
+        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
+        $categories_checked = $model->_custom(sprintf('
+            SELECT 
+                c.*
+            FROM jobs 
+                LEFT JOIN category_job cj ON cj.job_id = %d
+                LEFT JOIN categories c ON c.id = cj.cat_id
+                WHERE jobs.id = %d
+        ', intval($id), intval($id)), []);
 
-        // Get Job
-        $Job = new model\Job;
-        $current_job = $Job->findOneJob($id, $user->id)->data();
-        if (empty($current_job)) Utility\Redirect::to(APP_URL . "cabinet/add");
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_job)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
+                Utility\Redirect::to(APP_URL . "cabinet/edit/?id=".$id);
+            }
+            Utility\Session::put('post', []);
+            $model->_update('jobs',[
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "dt_chg" => date('Y-m-d H:i:s'),
+                "announcement" => Utility\Input::trim(Utility\Input::post("announcement")),
+                "requirements" => Utility\Input::trim(Utility\Input::post("requirements")),
+                "duties" => Utility\Input::trim(Utility\Input::post("duties")),
+                "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
+                "salary_from" => intval(Utility\Input::post("salary_from")),
+                "salary_to" => intval(Utility\Input::post("salary_to")),
+                "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
+            ], $id);
+
+            // Сохранение категории
+            $model->_custom(sprintf('DELETE FROM category_job WHERE job_id = %d', intval($id)), []); // Удаляем всё
+            if (is_array(Utility\Input::post("categories"))) {
+                if (count(Utility\Input::post("categories")) <= 3) {
+                    foreach (Utility\Input::post("categories") as $c) {
+                        $model->_create('category_job', [
+                            "cat_id" => intval($c),
+                            "job_id" => intval($id)
+                        ]);
+                    }
+                }
+            }
+            $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
+
+            Utility\Flash::success('Обновили вакансию.');
+            Utility\Redirect::to(APP_URL . "cabinet/edit/?id=".$id);
+        }
+
+        $current_job = $model->_find('jobs', [['id', "=", $id], ['client_id', "=", (int) self::$user->data()->id], ['status', "=", 'active']])->data();
+        if (empty($current_job)) {
+            Utility\Redirect::to(APP_URL . "cabinet");
+        }
 
         // Set any dependencies, data and render the view.
+        $this->View->addCSS("bower_components/chosen/chosen.min.css");
+        $this->View->addJS("bower_components/chosen/chosen.jquery.min.js");
+        $this->View->addJS("js/job.js");
         $this->View->render("cabinet/edit", [
-            "job" => $current_job,
-            "user" => $user,
-            "title" => "Добавить объявление",
+            "job" => $current_job[0],
+            "user" => self::$user->data(),
+            "categories" => $categories,
+            "categories_checked" => $categories_checked,
+            "title" => "Редактировать объявление",
             "page" => 'index',
             "post" => Utility\Session::get('post')
         ]);
     }
 
     /**
-     * Index: Renders the Cabinet view. NOTE: This controller can only be accessed
-     * by unauthenticated users!
+     * Settings
      * @access public
-     * @example Cabinet/add
+     * @example Cabinet/settings
      * @return void
      * @since 1.0.2
      */
-    public function _edit() {
+    public function settings() {
 
-        // Check that the user is authenticated.
-        Utility\Auth::checkAuthenticated();
-        
-        // Process the register request, redirecting to the login controller if
-        // successful or back to the register controller if not.
-        Utility\Session::put('post', $_POST);
-        if (Model\JobAdd::edit()) {
-            Utility\Redirect::to(APP_URL . "cabinet");
+        $model = new model\Crud;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!Utility\Input::check(Utility\Input::prepareToDbArray($_POST), self::$_inputs_settings)) {
+                Utility\Session::put('post', Utility\Input::prepareToDbArray($_POST));
+                Utility\Redirect::to(APP_URL . "cabinet/settings");
+            }
+
+
+            /*
+             * Загрузка аватара 
+             */
+            $dest_path = '';
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+                $image = new Utility\Image;
+                $filename = $image->load_resize_image($_FILES['avatar'], './upload/avatar/', 300, 300);
+                $dest_path = '/upload/avatar/' . $filename;
+            }
+
+
+            /*
+             * Сохр обычных хар-ки
+             */
+            Utility\Session::put('post', []);
+            $model->_update('users', [
+                "name" => Utility\Input::trim(Utility\Input::post("name")),
+                "about" => Utility\Input::trim(Utility\Input::post("about")),
+                "avatar" => $dest_path === '' ? Utility\Input::trim(Utility\Input::post("avatar_file")) : $dest_path,
+                "is_employee" => boolval(Utility\Input::post("is_employee")),
+                "is_employer" => boolval(Utility\Input::post("is_employer"))
+            ], self::$user->data()->id);
+
+
+            /*
+             * Сохранение контактов
+             */
+            // $new_contacts = json_decode(urldecode(trim(Utility\Input::post("contacts"))), true);
+            // foreach($contacts as $c) {
+            //     if (!in_array($c->id, array_column($new_contacts, 'id'))) {
+            //         // delete
+            //         $jobs = $model->_custom(sprintf('DELETE FROM users_contacts WHERE user_id=%d AND id=%d', self::$user->data()->id, $c->id), []); // delete prev
+            //     }
+            // }
+            // foreach($new_contacts as $c) {
+            //     if (!in_array($c['id'], array_column($contacts, 'id'))) {
+            //         // create
+            //         $contactId = $model->_create('users_contacts', [
+            //             "user_id" => self::$user->data()->id,
+            //             "type" => $c['type'],
+            //             "value" => $c['val']
+            //         ]);
+            //     } else {
+            //         // update
+            //         $model->_update('users_contacts',[
+            //             "user_id" => self::$user->data()->id,
+            //             "type" => $c['type'],
+            //             "value" => $c['val']
+            //         ], $c['id']);
+            //     }
+            // }
+
+            Utility\Flash::success('Обновили профиль.');
+            Utility\Redirect::to(APP_URL . "cabinet/settings");
         }
-        Utility\Redirect::to(APP_URL . "cabinet");
-    }
 
+        $this_user = $model->_findById('users', self::$user->data()->id);
+
+        // Set any dependencies, data and render the view.
+        $this->View->render("cabinet/settings", [
+            "user" =>  self::$user->data(),
+            "this_user" =>  $this_user,
+            "title" => "Профиль",
+            "page" => 'profile',
+            "post" => Utility\Session::get('post')
+        ]);
+    }
 }
