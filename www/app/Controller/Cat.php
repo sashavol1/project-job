@@ -67,7 +67,7 @@ class Cat extends Core\Controller {
         $category = $model->_find('categories', [['slug', '=', $urls[1]]], 'ORDER BY name ASC')->data();
 
         //$jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
-        $jobs = $model->_custom('
+        $jobs = $model->_custom(sprintf('
             SELECT 
                 j.*,
                 u.avatar as user_avatar,
@@ -75,8 +75,9 @@ class Cat extends Core\Controller {
             FROM jobs j
             LEFT JOIN users u ON u.id = j.client_id 
             LEFT JOIN category_job cj ON cj.job_id = j.id 
+            WHERE cj.cat_id = %d
             ORDER BY j.id DESC LIMIT 10
-        ', []); 
+        ', $category[0]->id), []); 
 
         // Set any dependencies, data and render the view.
         $this->View->render("cat/detail", [

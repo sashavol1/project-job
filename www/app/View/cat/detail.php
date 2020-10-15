@@ -5,7 +5,7 @@
     // die();
 
 ?> 
-<h1><?= $this->category[0]->name; ?> Работа в Великом Новгороде</h1>
+<h1><?= $this->category[0]->name; ?> - работа, вакансии</h1>
 <div class="uk-flex uk-flex-top">
     <div class="uk-card uk-card-default uk-card-body uk-width-1-4 uk-card-small">
         <div class="uk-width-1-1@s">
@@ -21,6 +21,9 @@
         </div>
     </div>
     <div class="uk-width-1-2 uk-card-small uk-margin-left">
+        <? if (empty($this->jobs)): ?>
+            Вакансий не найдено
+        <? endif; ?>
         <? foreach ($this->jobs as $j): ?>
             <div class="uk-card uk-card-default uk-width-1-1@m uk-margin">
                 <div class="uk-card-header">
