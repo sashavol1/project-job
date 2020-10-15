@@ -6,7 +6,7 @@ namespace App\Core;
  * Core View:
  *
  * @author Andrew Dyer <andrewdyer@outlook.com>
- * @since 1.0.1
+ * @since 1.1.0
  */
 class View {
 
@@ -171,6 +171,18 @@ class View {
             $this->getFile($filepath);
         }
         $this->getFile(DEFAULT_FOOTER_PATH);
+    }
+
+    /**
+     * RenderJSON: Requires in a view file and sets any view data if specified.
+     * @access public
+     * @param string $filepath
+     * @param array $data [optional]
+     * @return void
+     * @since 1.0
+     */
+    public function renderJson(array $data = []) {
+        print_r(json_encode($data, JSON_PRETTY_PRINT));
     }
 
     /**
