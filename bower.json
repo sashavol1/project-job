@@ -11,6 +11,7 @@
     "font-awesome": "^4.6.3"
   },
   "devDependencies": {
-    "uikit": "^3.4.6"
+    "uikit": "^3.4.6",
+    "jquery": "^3.5.1"
   }
 }
