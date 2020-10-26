@@ -16,6 +16,7 @@ use App\Utility\Flash;
         <link href="<?= $this->makeURL("bower_components/uikit/dist/css/uikit.min.css"); ?>" rel="stylesheet" type="text/css"/>
         <link href="<?= $this->makeURL("css/index.css"); ?>" rel="stylesheet" type="text/css"/>
         <?= $this->getCSS(); ?>
+        <script>DEBUG = <?= PROJECT_PRODUCTION ? 'false' : 'true'; ?></script>
     </head>
     <body>
         <nav class="uk-navbar-container uk-navbar-transparent" uk-navbar>
@@ -45,7 +46,7 @@ use App\Utility\Flash;
                                 <ul class="uk-nav uk-navbar-dropdown-nav">
                                     <li><a href="<?= $this->makeURL("cabinet"); ?>">Рабочая область</a></li>
                                     <li><a href="<?= $this->makeURL("cabinet/settings"); ?>">Настройка</a></li>
-                                    <li><a href="<?= $this->makeURL("login/index"); ?>">Выйти</a></li>
+                                    <li><a href="<?= $this->makeURL("login/logout"); ?>">Выйти</a></li>
                                 </ul>
                             </div>
                         </li>

@@ -150,11 +150,15 @@ class Cabinet extends Core\Controller {
 
             // Категории
             if (is_array(Utility\Input::post("categories"))) {
-                foreach (Utility\Input::post("categories") as $c) {
-                    $model->_create('category_job', [
-                        "cat_id" => intval($c),
-                        "job_id" => intval($jobId)
-                    ]);
+                if (count(Utility\Input::post("categories")) <= 3) {
+                    foreach (Utility\Input::post("categories") as $c) {
+                        $model->_create('category_job', [
+                            "cat_id" => intval($c),
+                            "job_id" => intval($jobId)
+                        ]);
+                    }
+                } else {
+                    Utility\Flash::danger('Категорий не может быть больше 3.');
                 }
             }
 
@@ -224,6 +228,8 @@ class Cabinet extends Core\Controller {
                             "job_id" => intval($id)
                         ]);
                     }
+                } else {                    
+                    Utility\Flash::danger('Категорий не может быть больше 3.');
                 }
             }
             $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();

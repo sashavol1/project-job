@@ -1,4 +1,4 @@
 
 module.exports = {
-  outputDir: '../www/public_html/vue/'
+    outputDir: '../www/public_html/vue/'
 }

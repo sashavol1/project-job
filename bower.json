@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "uikit": "^3.4.6",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "chosen": "^1.8.7"
   }
 }

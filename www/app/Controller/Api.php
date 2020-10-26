@@ -21,14 +21,20 @@ class Api extends Core\Controller {
      * beforeAction
      * @access private
      * @return void
-     * @since 1.1.0
+     * @since 1.0.0
      */
     public function beforeAction() {
-        // Тут проверка API
-        header('Content-Type: application/json');
-        Utility\Auth::checkAuthenticated();
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        self::$user = $userID === null ? false : Model\User::getInstance($userID);
+        if ($_SERVER['REQUEST_METHOD'] !== 'post') {
+            // Тут проверка API
+            header('Access-Control-Allow-Origin: *');
+            header('Content-Type: application/json');
+            // // Utility\Auth::checkAuthenticated();
+            // $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
+            // self::$user = $userID === null ? false : Model\User::getInstance($userID); 
+        } else {
+            echo 'welcome, to the rice field';
+            exit();
+        }
     }
 
     /**
@@ -36,21 +42,28 @@ class Api extends Core\Controller {
      * @access public
      * @example All/index
      * @return void
-     * @since 1.0.2
+     * @since 1.0.0
      */
     public function index() {
+        $this->View->renderJson([]);
 
-        if ($_SERVER['REQUEST_METHOD'] !== 'post') {
-            // Check that the user is authenticated.
-            // Utility\Auth::checkAuthenticated();
+    }
 
-            // // Get an instance of the user model using the ID stored in the session. 
-            $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-            $this->View->renderJson([]);
-        } else {
-            echo 'welcome, to the rice field';
-        }
-
+    /**
+     * Index: Simple API
+     * @access public
+     * @example All/get_categories
+     * @return render
+     * @since 1.0.0
+     */
+    public function get_categories() {
+        $model = new model\Crud;
+        $jobs = $model->_custom('
+            SELECT 
+                *
+            FROM categories
+        ', []); 
+        $this->View->renderJson($jobs);
     }
 
 }

@@ -31,3 +31,4 @@ define("DEFAULT_FOOTER_PATH", "_template/footer");
 define("HTMLENTITIES_FLAGS", ENT_QUOTES);
 define("HTMLENTITIES_ENCODING", "UTF-8");
 define("HTMLENTITIES_DOUBLE_ENCODE", false);
+define("PROJECT_PRODUCTION", $_SERVER["HTTP_HOST"] === 'job.loc' ? false : true);
