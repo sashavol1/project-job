@@ -1,7 +1,7 @@
 <template>
-    <div class="uk-flex uk-flex-top">
-        <FilterList msg="Welcome to Your Vue.js App"/>
-        <JobList msg="Welcome to Your Vue.js App"/>
+    <div class="uk-flex uk-flex-top is-preload">
+        <FilterList />
+        <JobList />
     </div>
 </template>
 
@@ -16,3 +16,15 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+    .is-preload {
+        &:after {
+            z-index: 100;
+            background: rgba(0,0,0,.2);
+            position: fixed;
+            left: 0;
+            top: 0;
+        }
+    }
+</style>

@@ -7,8 +7,9 @@ export default function () {
 
   async function load() {
     let result = await axios.post("http://job.loc/api/get_categories/");
-    console.log(result);
-    categories.value.splice(0, categories.value.length, ...result.data);
+    if (result.status === 200) {
+      categories.value.splice(0, categories.value.length, ...result.data);
+    }
   }
 
   function removeItem(item) {
