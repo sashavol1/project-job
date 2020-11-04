@@ -1,27 +1,22 @@
 import axios from "axios";
-import { ref } from "vue";
+import { reactive, toRefs } from "vue";
+import { apiUrl } from "./../utils.js";
 
 export default function () {
 
-  const categories = ref([]);
+  const state = reactive({
+    categories: []
+  })
 
-  async function load() {
-    let result = await axios.post("http://job.loc/api/get_categories/");
+  async function loadCategories() {
+    let result = await axios.post(apiUrl + "api/get_categories/");
     if (result.status === 200) {
-      categories.value.splice(0, categories.value.length, ...result.data);
-    }
-  }
-
-  function removeItem(item) {
-    let index = categories.value.indexOf(item);
-    if (index > -1) {
-      categories.value.splice(index, 1);
+      state.categories.splice(0, state.categories.length, ...result.data);
     }
   }
 
   return {
-    categories,
-    load,
-    removeItem
+    ...toRefs(state),
+    loadCategories
   };
 }
