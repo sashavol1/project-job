@@ -24,7 +24,7 @@ class Cat extends Core\Controller {
      * @since 1.1.0
      */
     public function beforeAction() {
-        Utility\Auth::checkAuthenticated();
+        // Utility\Auth::checkAuthenticated();
         $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
         self::$user = $userID === null ? false : Model\User::getInstance($userID);
     }
@@ -57,7 +57,6 @@ class Cat extends Core\Controller {
 
         // // Get an instance of the user model using the ID stored in the session. 
         $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-
         $user = $userID === null ? false : Model\User::getInstance($userID);
 
         // Get All job
@@ -76,7 +75,7 @@ class Cat extends Core\Controller {
             LEFT JOIN users u ON u.id = j.client_id 
             LEFT JOIN category_job cj ON cj.job_id = j.id 
             WHERE cj.cat_id = %d
-            ORDER BY j.id DESC LIMIT 10
+            ORDER BY j.dt_current DESC LIMIT 10
         ', $category[0]->id), []); 
 
         // Set any dependencies, data and render the view.
@@ -87,7 +86,7 @@ class Cat extends Core\Controller {
             "description" =>  $category[0]->description,
             "keywords" =>  $category[0]->name,
             "jobs" =>  $jobs,
-            "title" => "Работа с определенной категории",
+            "title" => $category[0]->name . ' работа в Великом Новгороде',
             "page" => 'detail'
         ]);
     }

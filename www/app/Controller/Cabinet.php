@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Core;
 use App\Model;
 use App\Utility;
+use App\Presenter;
 
 /**
  * Cabinet Controller:
@@ -91,14 +92,32 @@ class Cabinet extends Core\Controller {
 
         // Кидаем в архив
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $id_to_archive = intval(Utility\Input::trim(Utility\Input::get("to_archive")));
-            $model = new model\Crud;
-            $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_archive]])->data();
 
-            if (!empty($cur_job)) {
-                $model->_update('jobs', ["status" => 'archive'], $id_to_archive);
-                Utility\Flash::info('Добавили в архив ' . $cur_job->name);
-                Utility\Redirect::to(APP_URL . "cabinet");
+            // в архив
+            $id_to_archive = intval(Utility\Input::trim(Utility\Input::get("to_archive")));
+            if ($id_to_archive > 0) {                
+                $model = new model\Crud;
+                $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_archive]])->data();
+
+                if (!empty($cur_job)) {
+                    $model->_update('jobs', ["status" => 'archive'], $id_to_archive);
+                    Utility\Flash::info('Добавили в архив ' . $cur_job[0]->name);
+                    Utility\Redirect::to(APP_URL . "cabinet");
+                }
+            }
+
+            // актуально
+            $id_to_improve = intval(Utility\Input::trim(Utility\Input::get("to_improve")));
+            if ($id_to_improve > 0) {                
+                $model = new model\Crud;
+                $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_improve]])->data();
+                if (!empty($cur_job)) {
+                    if (!\App\Presenter\Helper::isActual($cur_job[0]->dt_current, 7)) {                        
+                        $model->_update('jobs', ["dt_current" => date('Y-m-d H:i:s')], $id_to_improve);
+                        Utility\Flash::info('Обновили актуальность объявления ' . $cur_job[0]->name);
+                        Utility\Redirect::to(APP_URL . "cabinet");
+                    }
+                }
             }
         } 
 

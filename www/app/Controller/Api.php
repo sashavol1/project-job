@@ -80,6 +80,14 @@ class Api extends Core\Controller {
             $filter .= sprintf(' AND j.id IN (SELECT job_id FROM category_job WHERE category_job.cat_id =  %d)', intval(Utility\Input::get("category_id")));
         }
 
+        if (!empty(Utility\Input::get("from"))) {
+            $filter .= sprintf(' AND j.salary_from < %d', intval(Utility\Input::get("from")));
+        }
+
+        if (!empty(Utility\Input::get("to"))) {
+            $filter .= sprintf(' AND j.salary_to > %d', intval(Utility\Input::get("to")));
+        }
+
         $model = new model\Crud;
         $jobs = $model->_custom(sprintf('
             SELECT 
@@ -89,9 +97,39 @@ class Api extends Core\Controller {
             FROM jobs j
             INNER JOIN users u ON u.id = j.client_id 
             WHERE 1 = 1 %s
-            ORDER BY j.id DESC LIMIT 10
+            ORDER BY j.dt_current DESC LIMIT 30
         ', $filter), []); 
         $this->View->renderJson($jobs);
+    }
+
+    /**
+     * Get job
+     * @access public
+     * @example All/get_jobs
+     * @return render
+     * @since 1.0.0
+     */
+    public function get_job() {
+        $filter = '';
+
+        if (!empty(Utility\Input::get("job_id"))) {
+            $filter .= sprintf(' AND j.id = %d', intval(Utility\Input::get("job_id")));
+
+            $model = new model\Crud;
+            $job = $model->_custom(sprintf('
+                SELECT 
+                    j.*,
+                    u.avatar as user_avatar,
+                    u.name as user_name
+                FROM jobs j
+                INNER JOIN users u ON u.id = j.client_id 
+                WHERE 1 = 1 %s
+                LIMIT 1
+            ', $filter), []); 
+            $this->View->renderJson($job);
+        } else {            
+            $this->View->renderJson([]);
+        }
     }
 
 }
