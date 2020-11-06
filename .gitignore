@@ -10,6 +10,9 @@ bower_components
 composer.phar
 /vendor/
 
+### node_modules ###
+/node_modules/
+
 ### Other ###
 /logs/
 .txt
