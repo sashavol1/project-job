@@ -25,7 +25,6 @@ class Mailer {
      */
     public function send($title = "", $text = "", $emailTo = "") {
         echo 'ok';
-        die();
         // Instantiation and passing `true` enables exceptions
         // $mail = new PHPMailer(true);
 

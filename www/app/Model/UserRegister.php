@@ -31,6 +31,10 @@ class UserRegister {
             "matches" => "password",
             "required" => true
         ],
+        "captcha" => [
+            "required" => true,
+            "matches" => "csrf_token"
+        ],
     ];
 
     /**

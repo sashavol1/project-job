@@ -27,6 +27,7 @@ class Registration extends Core\Controller {
         // Check that the user is unauthenticated.
         Utility\Auth::checkUnauthenticated();
 
+        $this->View->addJS("js/registration.min.js");
         // Set any dependencies, data and render the view.
         $this->View->render("registration/index", [
             "title" => "Регистрация",
@@ -75,7 +76,7 @@ class Registration extends Core\Controller {
 
             $model = new model\Crud;
             $client = $model->_find('users', [['id', '=', $id], ['password', '=', $hash], ['status', '=', Utility\Config::get("STATUS")['DISABLED']]])->data();
-            
+
             if (!empty($client)) {
                 Utility\Session::put(Utility\Config::get("SESSION_USER"), $client[0]->id);
                 Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
