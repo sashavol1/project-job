@@ -14,7 +14,7 @@ composer.phar
 /node_modules/
 
 ### Other ###
-config.php
+*config.php
 /parser/
 /logs/
 .txt
