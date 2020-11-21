@@ -27,3 +27,9 @@ body {
     border: 1px solid #ddd;
     padding: 25px;
 }
+
+@media (max-width: 640px) { 
+    .uk-navbar-nav {
+        display: none;
+    }
+}

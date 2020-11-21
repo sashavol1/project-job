@@ -2,7 +2,7 @@
     <h1>Здравствуйте, <?= $this->user->name; ?></h1>
     <a href="/cabinet/add" class="uk-button uk-button-primary">Добавить работу</a>
     <a href="/cabinet/settings" class="uk-button uk-button-primary">Редактировать профиль</a>
-    <div class="uk-width-1-2 uk-card-small uk-margin-top">
+    <div class="uk-width-1-2@m uk-card-small uk-margin-top">
         <? foreach ($this->jobs as $j): ?>
             <div class="uk-card uk-width-1-1@m uk-margin <?= $j->status == 'archive' ? 'uk-card-secondary' : 'uk-card-default'; ?>">
                 <div class="uk-card-header">

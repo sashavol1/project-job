@@ -62,10 +62,16 @@ class UserRegister {
                 "name" => Utility\Input::post("name"),
                 "password" => Utility\Hash::generate(Utility\Input::post("password"), $salt),
                 "salt" => $salt,
+                "status" => Utility\Config::get("STATUS")['DISABLED'],
                 "is_employer" => (bool) Utility\Input::post("is_employer"),
                 "is_employee" => (bool) Utility\Input::post("is_employee"),
                 "type" => 'user'
             ]);
+
+            // Отправляем письмо с ссылкой
+            $mail = new Utility\Mailer();
+            $message = 1; // Utility\Hash::generate(Utility\Input::post("password"), $salt)
+            $mail->send('title', 'text', 'email');
 
             // Write all necessary data into the session as the user has been
             // successfully registered and return the user's unique ID.

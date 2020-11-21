@@ -15,7 +15,7 @@ use App\Utility\Redirect;
  * @since 1.0.2
  */
 
-class Cat extends Core\Controller {
+class News extends Core\Controller {
 
     /**
      * beforeAction
@@ -51,46 +51,28 @@ class Cat extends Core\Controller {
     public function detail() {
 
         $urls = explode("/", filter_var(rtrim(Input::get("url"), "/"), FILTER_SANITIZE_URL));
-        if (count($urls) !== 2) {            
+        if (count($urls) !== 2) {
             Redirect::to(404);
         }
-
-        // // Get an instance of the user model using the ID stored in the session. 
-        $userID = Utility\Session::get(Utility\Config::get("SESSION_USER"));
-        $user = $userID === null ? false : Model\User::getInstance($userID);
 
         // Get All job
         $model = new model\Crud;
-        $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
-        $model = new model\Crud;
-        $category = $model->_find('categories', [['slug', '=', $urls[1]]], 'ORDER BY name ASC')->data();
-        if (empty($category)) {
+        $blogs = $model->_find('blogs', [['slug', '=', $urls[1]]], 'ORDER BY name ASC')->data();
+        if (empty($blogs)) {
             Redirect::to(404);
         }
 
-        //$jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
+        // view +1
         $model = new model\Crud;
-        $jobs = $model->_custom(sprintf('
-            SELECT 
-                j.*,
-                u.avatar as user_avatar,
-                u.name as user_name
-            FROM jobs j
-            LEFT JOIN users u ON u.id = j.client_id 
-            LEFT JOIN category_job cj ON cj.job_id = j.id 
-            WHERE cj.cat_id = %d
-            ORDER BY j.dt_current DESC LIMIT 10
-        ', $category[0]->id), []); 
+        $model->_custom(sprintf('UPDATE blogs SET views = views + 1 WHERE id = %d', $blogs[0]->id), []);
 
         // Set any dependencies, data and render the view.
-        $this->View->render("cat/detail", [
+        $this->View->render("news/detail", [
             "user" =>  !empty($user) ? $user->data() : [],
-            "categories" =>  $categories,
-            "category" =>  $category,
-            "description" =>  $category[0]->description,
-            "keywords" =>  $category[0]->name,
-            "jobs" =>  $jobs,
-            "title" => $category[0]->name . ' работа в Великом Новгороде',
+            "description" =>  $blogs[0]->announcement,
+            "keywords" =>  $blogs[0]->name,
+            "blog" =>  $blogs[0],
+            "title" => $blogs[0]->name,
             "page" => 'detail'
         ]);
     }

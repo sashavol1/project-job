@@ -20,6 +20,9 @@ use App\Utility\Flash;
     </head>
     <body>
         <nav class="uk-navbar-container uk-navbar-transparent" uk-navbar>
+            <div class="uk-navbar-left uk-hidden@s uk-hidden@m">
+                <a class="uk-navbar-toggle" uk-navbar-toggle-icon href="#" uk-toggle="target: #toggle-menu; animation: uk-animation-fade"></a>
+            </div>
             <div class="uk-navbar-left">
               <a class="uk-navbar-item uk-logo" href="<?= $this->makeURL("cabinet"); ?>"><?= $this->escapeHTML(APP_NAME); ?></a>
             </div>
@@ -67,6 +70,48 @@ use App\Utility\Flash;
           <!-- /#main-navbar -->
         </nav>
         <!-- /#navbar -->
+
+        <div class="uk-card uk-card-default uk-card-body uk-width-1-2@s"  id="toggle-menu" hidden>
+            <ul class="uk-nav-default uk-nav-parent-icon"uk-nav>
+                <?php if (!empty($this->user)): ?>
+                  <?php if ($this->user->type == 'admin'): ?>                          
+                    <li>
+                      <a href="<?= $this->makeURL("manager"); ?>">Менеджер</a>
+                    </li>
+                    <li>
+                      <a href="<?= $this->makeURL("login/logout"); ?>">Выйти</a>
+                    </li>
+                  <?php else: ?>
+                    <li>
+                      <a href="<?= $this->makeURL("all"); ?>">Вся работа</a>
+                    </li>
+                    <li>
+                      <a href="<?= $this->makeURL("cabinet/add"); ?>">Добавить вакансию</a>
+                    </li>
+                    <li>
+                        <a href="<?= $this->makeURL("cabinet"); ?>">Кабинет</a>
+                        <div class="uk-navbar-dropdown">
+                            <ul class="uk-nav uk-navbar-dropdown-nav">
+                                <li><a href="<?= $this->makeURL("cabinet"); ?>">Рабочая область</a></li>
+                                <li><a href="<?= $this->makeURL("cabinet/settings"); ?>">Настройка</a></li>
+                                <li><a href="<?= $this->makeURL("login/logout"); ?>">Выйти</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                  <?php endif; ?>
+                <?php else: ?>
+                    <li>
+                      <a href="<?= $this->makeURL("all"); ?>">Вся работа</a>
+                    </li>
+                    <li>
+                      <a href="<?= $this->makeURL("registration/index"); ?>">Регистрация</a>
+                    </li>
+                    <li>
+                      <a href="<?= $this->makeURL("login/index"); ?>">Войти</a>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </div>
 
         <div class="uk-container uk-margin-top">
             <div id="header"></div>

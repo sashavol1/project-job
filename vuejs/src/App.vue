@@ -1,10 +1,14 @@
 <template>
-    <div class="uk-flex uk-flex-top">
+    <div class="uk-flex uk-flex-top uk-grid-small" uk-grid>
         <Spinner v-if="isLoad" />
-        <FilterList 
-          :categories="categories" 
-          @set-filter="handlerSetFilter" />
-        <JobList :jobs="jobs" @set-job="handlerLoadJob" />
+        <div class="uk-width-1-3@m">
+          <FilterList 
+            :categories="categories" 
+            @set-filter="handlerSetFilter" />
+        </div>
+        <div class="uk-width-1-2@m">
+          <JobList :jobs="jobs" @set-job="handlerLoadJob" />
+        </div>
         <transition name="fade">
           <DetailJob v-if="showModal" :job="job" @set-show="handlerCloseJob" />
         </transition>

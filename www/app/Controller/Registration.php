@@ -58,4 +58,41 @@ class Registration extends Core\Controller {
         Utility\Redirect::to(APP_URL . "registration");
     }
 
+    /**
+     * Index: Renders the registration view. NOTE: This controller can only be accessed
+     * by unauthenticated users!
+     * @access public
+     * @example registration/index
+     * @return void
+     * @since 1.0.2
+     */
+    public function verify() {
+
+        $id = (int) trim(Utility\Input::get("id"));
+        $hash = trim(Utility\Input::get("hash"));
+
+        if ($id > 0 && $hash != '') {
+
+            $model = new model\Crud;
+            $client = $model->_find('users', [['id', '=', $id], ['password', '=', $hash], ['status', '=', Utility\Config::get("STATUS")['DISABLED']]])->data();
+            
+            if (!empty($client)) {
+                Utility\Session::put(Utility\Config::get("SESSION_USER"), $client[0]->id);
+                Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
+                Utility\Redirect::to(APP_URL . "cabinet/");
+            }
+        }
+
+        // if (!$User = User::getInstance($email)) {
+
+        // }
+
+        // // Отправляем письмо с ссылкой
+        // $mail = new Utility\Mailer();
+        // // Проверка Utility\Hash::generate($password, $data->salt) !== $data->password
+        // var_dump($mail->send());
+        // var_dump(2);
+        // die();
+    }
+
 }

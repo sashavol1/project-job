@@ -34,9 +34,9 @@ class Index extends Core\Controller {
 
         // Get All job
         $model = new model\Crud;
-
         $categories = $model->_find('categories', [], 'ORDER BY name ASC')->data();
         //$jobs = $model->_find('jobs', [], 'ORDER BY id DESC')->data();
+        $model = new model\Crud;
         $jobs = $model->_custom('
             SELECT 
                 j.*,
@@ -44,7 +44,14 @@ class Index extends Core\Controller {
                 u.name as user_name
             FROM jobs j
             INNER JOIN users u ON u.id = j.client_id 
-            ORDER BY j.id DESC LIMIT 10
+            ORDER BY j.dt_current DESC LIMIT 7
+        ', []);
+
+        $model = new model\Crud;
+        $blogs = $model->_custom('
+            SELECT 
+                *
+            FROM blogs ORDER BY id DESC LIMIT 5
         ', []);
 
         // Set any dependencies, data and render the view.
@@ -54,7 +61,10 @@ class Index extends Core\Controller {
             "user" =>  !empty($user) ? $user->data() : [],
             "categories" =>  $categories,
             "jobs" =>  $jobs,
-            "title" => "Главная",
+            "blogs" =>  $blogs,
+            "title" => "Поиск работы вакансий в Великом Новгороде",
+            "description" =>  'Сайт вакансий и работы в городе Великим Новгород и область. Здесь можно найти работы или разместить вакансию, чтобы найти сотрудника!',
+            "keywords" =>  'вакансии, сайт, работа',
             "page" => 'index'
         ]);
     }

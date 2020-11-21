@@ -1,5 +1,5 @@
 <template>
-    <div class="uk-card uk-card-default uk-card-body uk-width-1-4 uk-card-small">
+    <div class="uk-card uk-card-default uk-card-body uk-card-small">
         <div class="uk-width-1-1@s">
             <ul class="uk-nav-default uk-nav-parent-icon uk-nav" uk-nav="">
                 <li v-bind:class="{ 'uk-active': i.id === isActiveId }" v-for="i in categories" :key="i.name"><a @click="setCategory(i.id)">{{ i.name }}</a></li>

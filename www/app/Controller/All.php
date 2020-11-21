@@ -79,6 +79,7 @@ class All extends Core\Controller {
         $job = $model->_custom(sprintf('
             SELECT 
                 j.*,
+                u.dt_add as user_dt_add,
                 u.avatar as user_avatar,
                 u.name as user_name
             FROM jobs j
@@ -87,6 +88,7 @@ class All extends Core\Controller {
             ORDER BY j.id DESC LIMIT 10
         ', addslashes($urls[1])), []);
 
+        $model = new model\Crud;
         $model->_custom(sprintf('UPDATE jobs SET views = views + 1 WHERE id = %d', $job[0]->id), []);
 
         // Set any dependencies, data and render the view.

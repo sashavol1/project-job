@@ -76,6 +76,10 @@ class UserLogin {
         try {
             $data = $User->data();
 
+            if ($data->status == Utility\Config::get("STATUS")['DISABLED']) {                
+                throw new Exception(Utility\Text::get("LOGIN_USER_STATUS_INCORRECT"));
+            }
+
             // Check if the provided password fits the hashed password in the
             // database.
             $password = Utility\Input::post("password");

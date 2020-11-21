@@ -1,5 +1,5 @@
 <template>
-    <div class="uk-width-1-2 uk-card-small uk-margin-left">
+    <div class="uk-card-small uk-margin-left">
         <div v-if="jobs.length === 0">
             <div class="uk-alert-warning uk-alert" uk-alert>
                 <p>Ничего не нашли!</p>

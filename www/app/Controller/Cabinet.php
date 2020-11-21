@@ -95,7 +95,7 @@ class Cabinet extends Core\Controller {
 
             // в архив
             $id_to_archive = intval(Utility\Input::trim(Utility\Input::get("to_archive")));
-            if ($id_to_archive > 0) {                
+            if ($id_to_archive > 0) {
                 $model = new model\Crud;
                 $cur_job = $model->_find('jobs', [['client_id', '=', self::$user->data()->id], ['id', '=', $id_to_archive]])->data();
 
