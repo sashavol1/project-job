@@ -69,6 +69,10 @@ class Registration extends Core\Controller {
      */
     public function verify() {
 
+        // $mail = new Utility\Mailer();
+        // $message = 'Перейдите по ссылке, чтобы подтвердить аккаунт на rabota.nov.ru <a href="https://rabota.nov.ru/registration/verify/?hash=">подтвердить</a>. Если вы не регистрировались, проигнорируйте это письмо.'; // 
+        // $mail->send('123Подтверждение почты123', 'name', $message, 'ssashavol7@gmail.com');
+
         $id = (int) trim(Utility\Input::get("id"));
         $hash = trim(Utility\Input::get("hash"));
 
@@ -78,22 +82,20 @@ class Registration extends Core\Controller {
             $client = $model->_find('users', [['id', '=', $id], ['password', '=', $hash], ['status', '=', Utility\Config::get("STATUS")['DISABLED']]])->data();
 
             if (!empty($client)) {
+
+                // update status
+                $model = new model\Crud;
+                $model->_custom(sprintf('UPDATE users SET status = \'active\' WHERE id = %d', $client[0]->id), []);
+
+                // auth
                 Utility\Session::put(Utility\Config::get("SESSION_USER"), $client[0]->id);
                 Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
                 Utility\Redirect::to(APP_URL . "cabinet/");
             }
         }
 
-        // if (!$User = User::getInstance($email)) {
+        Utility\Redirect::to(APP_URL);
 
-        // }
-
-        // // Отправляем письмо с ссылкой
-        // $mail = new Utility\Mailer();
-        // // Проверка Utility\Hash::generate($password, $data->salt) !== $data->password
-        // var_dump($mail->send());
-        // var_dump(2);
-        // die();
     }
 
 }

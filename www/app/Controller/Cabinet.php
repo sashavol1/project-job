@@ -160,7 +160,7 @@ class Cabinet extends Core\Controller {
                 "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
-                "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
+                "salary_type" => boolval(Utility\Input::post("salary_type")) ? 1 : 0
             ]);
 
             $model->_update('jobs',[
@@ -234,7 +234,7 @@ class Cabinet extends Core\Controller {
                 "contacts" => Utility\Input::trim(Utility\Input::post("contacts")),
                 "salary_from" => intval(Utility\Input::post("salary_from")),
                 "salary_to" => intval(Utility\Input::post("salary_to")),
-                "salary_type" => boolval(Utility\Input::post("salary_type")) ? true : false
+                "salary_type" => boolval(Utility\Input::post("salary_type")) ? 1 : 0
             ], $id);
 
             // Сохранение категории

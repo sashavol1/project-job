@@ -12,7 +12,7 @@ use App\Utility\Flash;
         <meta name="keywords" content="<?= $this->keywords; ?>" />
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="<?= $this->makeURL("favicon.ico"); ?>" rel="shortcut icon">
+        <link href="<?= $this->makeURL("image/favicon.ico"); ?>" rel="shortcut icon">
         <link href="<?= $this->makeURL("bower_components/uikit/dist/css/uikit.min.css"); ?>" rel="stylesheet" type="text/css"/>
         <link href="<?= $this->makeURL("css/index.css"); ?>" rel="stylesheet" type="text/css"/>
         <?= $this->getCSS(); ?>

@@ -52,36 +52,35 @@ class UserRegister {
         if (!Utility\Input::check($_POST, self::$_inputs)) {
             return false;
         }
+
         try {
 
             // Generate a salt, which will be applied to the during the password
             // hashing process.
             $salt = Utility\Hash::generateSalt(32);
+            $hash = Utility\Hash::generate(Utility\Input::post("password"), $salt);
 
-            // Insert the new user record into the database, storing the unique
-            // ID which will be returned on success.
-            $User = new User;
-            $userID = $User->createUser([
-                "email" => Utility\Input::post("email"),
-                "name" => Utility\Input::post("name"),
-                "password" => Utility\Hash::generate(Utility\Input::post("password"), $salt),
+            $model = new Crud;
+            $userID = $model->_create('users', [
+                "email" => trim(Utility\Input::post("email")),
+                "name" => trim(Utility\Input::post("name")),
+                "password" => $hash,
                 "salt" => $salt,
                 "status" => Utility\Config::get("STATUS")['DISABLED'],
-                "is_employer" => (bool) Utility\Input::post("is_employer"),
-                "is_employee" => (bool) Utility\Input::post("is_employee"),
+                "is_employer" => (bool) Utility\Input::post("is_employer") ? 1 : 0,
+                "is_employee" => (bool) Utility\Input::post("is_employee") ? 1 : 0,
                 "type" => 'user'
             ]);
 
             // Отправляем письмо с ссылкой
             $mail = new Utility\Mailer();
-            $message = 1; // Utility\Hash::generate(Utility\Input::post("password"), $salt)
-            $mail->send('title', 'text', 'email');
+            $message = 'Перейдите по ссылке, чтобы подтвердить аккаунт на сайте Работа Новгород <a href="https://rabota.nov.ru/registration/verify/?hash='.$hash.'&id='.$userID.'">подтвердить</a>. Если вы не регистрировались, проигнорируйте это письмо.'; // 
+            $mail->send('Подтверждение почты', trim(Utility\Input::post("name")), $message, trim(Utility\Input::post("email")));
 
             // Write all necessary data into the session as the user has been
             // successfully registered and return the user's unique ID.
-            Utility\Flash::success(Utility\Text::get("REGISTER_USER_CREATED"));
-
-            return $userID;
+            Utility\Flash::success(Utility\Text::get("REGISTER_USER_EMAIL"));
+            Utility\Redirect::to(APP_URL . "/");
         } catch (Exception $ex) {
             Utility\Flash::danger($ex->getMessage());
         }

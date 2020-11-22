@@ -8,7 +8,7 @@ define("ROOT", realpath(dirname(__FILE__) . "/../") . "/");
 // App Config
 define("APP_NAME", "РАБОТА");
 define("APP_ROOT", ROOT . "app/");
-define("APP_PROTOCOL", stripos($_SERVER["SERVER_PROTOCOL"], "https") === true ? "https://" : "http://");
+define("APP_PROTOCOL", $_SERVER["HTTP_HOST"] !== 'job.loc' ? "https://" : "http://");
 define("APP_URL", APP_PROTOCOL . $_SERVER["HTTP_HOST"] . str_replace("public_html", "", dirname($_SERVER["SCRIPT_NAME"])) . "");
 define("APP_CONFIG_FILE", APP_ROOT . "config.php");
 

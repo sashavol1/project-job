@@ -276,7 +276,7 @@ class Validate {
      * @since 1.1.0
      */
     protected function uniqueRule($input, $value, $ruleValue) {
-        $check = $this->_Db->select($ruleValue, [$input, "=", $value]);
+        $check = $this->_Db->select($ruleValue, [[$input, "=", $value]]);
         if ($check->count()) {
             if ($this->_recordID and $check->first()->id === $this->_recordID) {
                 return;
